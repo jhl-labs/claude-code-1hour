@@ -12,7 +12,7 @@
 
 ## 영상
 - 모션 영상은 `remotion/compositions/V*.tsx`. `pnpm remotion:studio`로 미리보기.
-- 임베디드 데모 영상은 `demos/tapes/*.tape` → vhs 렌더 → Remotion 합성.
+- 임베디드 데모 영상도 Remotion-only 시뮬레이션. `remotion/compositions/V7*.tsx`, `V11Install.tsx`.
 
 ## 관습
 - 사용자 시스템 정보(호스트명, 사용자명, IP)가 절대 코드/스크립트에 노출되지 않게 한다.
@@ -22,5 +22,5 @@
 ## 진행 상황
 - [x] 플랜 1 (M1+M2) — 사이트 골격 + 정적 콘텐츠
 - [x] 플랜 2 (M3+M4) — 모션그래픽 + R1 시뮬레이션 영상 9편
-- [ ] 플랜 3 (M5) — 임베디드 데모 영상 5편
+- [x] 플랜 3 (M5) — 임베디드 데모 영상 5편
 - [ ] 플랜 4 (M6) — 마감·리허설
