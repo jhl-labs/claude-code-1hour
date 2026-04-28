@@ -13,6 +13,7 @@ import { V7ALegacyC } from "./compositions/V7ALegacyC";
 import { V7CBuild } from "./compositions/V7CBuild";
 import { V7EUnitTest } from "./compositions/V7EUnitTest";
 import { V7HDocs } from "./compositions/V7HDocs";
+import { V11Install } from "./compositions/V11Install";
 
 const Placeholder: React.FC = () => null;
 
@@ -127,6 +128,14 @@ export const RemotionRoot: React.FC = () => {
         id="V7-H-docs"
         component={V7HDocs}
         durationInFrames={90 * 30}
+        fps={30}
+        width={1920}
+        height={1080}
+      />
+      <Composition
+        id="V11-install"
+        component={V11Install}
+        durationInFrames={30 * 30}
         fps={30}
         width={1920}
         height={1080}
