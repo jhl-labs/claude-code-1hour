@@ -24,7 +24,7 @@ if ! command -v vhs >/dev/null 2>&1; then
   curl -L "https://github.com/charmbracelet/vhs/releases/download/v${VHS_VERSION}/vhs_${VHS_VERSION}_Linux_x86_64.tar.gz" \
     -o "$TMP/vhs.tgz"
   tar -xzf "$TMP/vhs.tgz" -C "$TMP"
-  install -m 0755 "$TMP/vhs" "$BIN_DIR/vhs"
+  install -m 0755 "$TMP/vhs_${VHS_VERSION}_Linux_x86_64/vhs" "$BIN_DIR/vhs"
   rm -rf "$TMP"
 fi
 

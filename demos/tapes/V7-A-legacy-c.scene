@@ -1,0 +1,18 @@
+# V7-A — 레거시 C 분석/리팩토링 (목표 ~75s)
+COLS 140
+ROWS 38
+PROMPT $
+TYPE_DELAY 0.035
+HOLD 12.0
+
+# Setup line so viewers know the file
+: type "wc -l drivers/mtd/nand/raw/davinci_nand.c"
+: enter
+: output "    840 drivers/mtd/nand/raw/davinci_nand.c\n"
+: sleep 0.6
+: prompt
+
+: type "claude '이 NAND 컨트롤러 드라이버의 함수별 책임을 정리하고, 명령 시퀀서·ECC·DMA 부분을 책임 단위로 분리할 수 있게 리팩토링을 제안해줘. 비트필드 매크로 가독성 개선 포함.'"
+: enter
+: sleep 1.2
+: cat outputs/A-legacy-c.txt

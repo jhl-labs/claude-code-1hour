@@ -1,0 +1,17 @@
+# V7-H — 문서화 자동 생성 (목표 ~75s)
+COLS 140
+ROWS 38
+PROMPT $
+TYPE_DELAY 0.035
+HOLD 12.0
+
+: type "find Documentation -name '*davinci*nand*' 2>/dev/null | wc -l"
+: enter
+: output "0\n"
+: sleep 0.5
+: prompt
+
+: type "claude '이 드라이버의 컨트롤러 레지스터 맵을 마크다운 표로(오프셋·비트필드·의미). NAND read page 명령 흐름을 Mermaid 시퀀스 다이어그램으로(CPU/컨트롤러/NAND chip).'"
+: enter
+: sleep 1.2
+: cat outputs/H-docs.txt

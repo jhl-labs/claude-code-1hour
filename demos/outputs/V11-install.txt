@@ -1,0 +1,20 @@
+$ npm install -g @anthropic-ai/claude-code
+added 142 packages in 18s
+
+$ claude --version
+claude-code 1.0.92
+
+$ cd ~/u-boot
+
+$ claude
+Welcome to Claude Code!  /help for shortcuts.
+
+> 이 저장소가 어떤 프로젝트인지 30초로 요약해줘
+
+  - U-Boot 메인라인 (drivers/, arch/, configs/, test/)
+  - 빌드: make <board>_defconfig && make
+  - 단위테스트: ./test/py/test.py --bd=sandbox
+  - 보드 없이 sandbox target 으로 host 검증 가능
+
+> 첫 명령 끝.  CLAUDE.md 5줄만 만들어줘
+[done] 30초 안에 ready.

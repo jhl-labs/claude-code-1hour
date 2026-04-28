@@ -1,0 +1,17 @@
+# V7-E — 단위 테스트 자동 생성 (목표 ~75s)
+COLS 140
+ROWS 38
+PROMPT $
+TYPE_DELAY 0.035
+HOLD 12.0
+
+: type "grep -l davinci_nand test/dm/ 2>/dev/null || echo '(no tests yet)'"
+: enter
+: output "(no tests yet)\n"
+: sleep 0.6
+: prompt
+
+: type "claude '이 함수의 unit test를 sandbox에서 돌릴 수 있게 작성. 정상 + 경계 조건(타임아웃·잘못된 명령·ECC 비트 1~3개 에러). test/dm/ 패턴 따라서.'"
+: enter
+: sleep 1.2
+: cat outputs/E-unit-test.txt

@@ -1,0 +1,78 @@
+[Claude] DaVinci EMIF NAND 컨트롤러 문서 자동 생성
+
+============================================================
+1. 레지스터 맵 (offset / 비트필드 / 의미)
+============================================================
+| Offset | Name           | Bits   | Field            | Meaning                          |
+|--------|----------------|--------|------------------|----------------------------------|
+| 0x60   | NANDFCR        | [0]    | NAND_ENABLE_CS2  | CS2 NAND enable                  |
+|        |                | [1]    | NAND_ENABLE_CS3  | CS3 NAND enable                  |
+|        |                | [4]    | 4BIT_ECC_SEL     | 4bit ECC chip select             |
+|        |                | [8]    | 1BIT_ECC_START   | start 1bit ECC calc              |
+|        |                | [12]   | 4BIT_ECC_START   | start 4bit ECC calc              |
+|        |                | [13]   | 4BIT_CALC_START  | start syndrome calc              |
+| 0x64   | NANDFSR        | [0]    | READY            | NAND R/B# (1 = ready)            |
+|        |                | [11:8] | CORR_STATE       | 4bit ECC correction state machine|
+|        |                | [10]   | ECC_BUSY         | 4bit ECC busy                    |
+| 0x70   | NANDFECC[0..3] | [27:16]| ECC_HI           | 1bit ECC high 12 bits            |
+|        |                | [11:0] | ECC_LO           | 1bit ECC low 12 bits             |
+| 0xBC   | NAND4BITECC[0..3]|[25:16]| ECC_HI         | 4bit ECC high 10 bits            |
+|        |                | [9:0]  | ECC_LO           | 4bit ECC low 10 bits             |
+| 0xD0   | NANDERRVAL1    | [7:0]  | ERR_VAL_0        | bit error value (slot 0)         |
+|        |                | [23:16]| ERR_VAL_1        | bit error value (slot 1)         |
+| 0xD4   | NANDERRADD1    | [9:0]  | ERR_ADDR_0       | bit error address (slot 0)       |
+
+------------------------------------------------------------
+값 인코딩 메모 (line 199-208 참고):
+  HW 가 주는 32bit ECC 에서 RESERVED bit (12..15, 28..31) 를 빼고
+  24bit 로 packing -> ~tmp 로 보수 -> 3 byte 로 저장.
+  Linux mainline 과 동일: ".PQR.stu => ~PQRstu"
+------------------------------------------------------------
+
+============================================================
+2. NAND read page 명령 흐름 — Mermaid sequenceDiagram
+============================================================
+```mermaid
+sequenceDiagram
+    autonumber
+    participant CPU
+    participant DRV as davinci_nand driver
+    participant EMIF as DaVinci EMIF
+    participant CHIP as NAND chip
+    CPU->>DRV: read_page(page)
+    DRV->>EMIF: cmd_ctrl(NAND_CMD_READ0, CLE)
+    EMIF->>CHIP: command 0x00
+    DRV->>EMIF: cmd_ctrl(addr0..addr4, ALE)
+    EMIF->>CHIP: 5-byte address
+    DRV->>EMIF: cmd_ctrl(NAND_CMD_READSTART, CLE)
+    EMIF->>CHIP: command 0x30
+    loop until READY
+        DRV->>EMIF: read NANDFSR.READY
+        EMIF-->>DRV: 0 then 1
+    end
+    DRV->>EMIF: 4bit_enable_hwecc(NAND_ECC_READ)
+    Note over DRV,EMIF: NANDFCR.4BIT_ECC_START := 1
+    DRV->>EMIF: read_buf(2048 byte) (4-byte burst)
+    EMIF->>CHIP: data out
+    EMIF-->>DRV: page data
+    DRV->>EMIF: 4bit_readecc(hw_4ecc[0..3])
+    DRV->>DRV: correct_data(buf, read_ecc, calc_ecc)
+    alt syndrome == 0
+        DRV-->>CPU: data, stat=0
+    else correctable
+        DRV->>DRV: dat[err_addr] ^= err_val
+        DRV-->>CPU: data, stat=numerrors
+    else uncorrectable
+        DRV-->>CPU: -EBADMSG
+    end
+```
+
+============================================================
+3. ECC 모드 의사결정
+============================================================
+  CONFIG_SYS_NAND_HW_ECC                 -> 1bit, 512B/3B,    Hamming
+  CONFIG_SYS_NAND_4BIT_HW_ECC_OOBFIRST   -> 4bit, 512B/10B,   BCH
+  CONFIG_SYS_NAND_SOFT_ECC               -> SW ECC
+
+[done] 표 1개 + Mermaid 1개 + 모드 매트릭스.
+       0줄 -> 80줄. 데이터시트와 코드 사이의 갭이 사라짐.

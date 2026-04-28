@@ -1,0 +1,8 @@
+# V11 — 설치 & 첫 명령 (목표 ~25s)
+COLS 120
+ROWS 30
+PROMPT $
+TYPE_DELAY 0.04
+HOLD 8.0
+
+: cat outputs/V11-install.txt

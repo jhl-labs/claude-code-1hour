@@ -1,0 +1,70 @@
+[Claude] drivers/mtd/nand/raw/davinci_nand.c (840 lines) 분석 중...
+
+============================================================
+함수별 책임 표 (라인 기준 9개 핵심 함수)
+============================================================
+| 함수                                  | 라인 | 책임 영역      | 부작용         |
+|---------------------------------------|------|----------------|----------------|
+| nand_davinci_read_buf                 |  58  | 데이터 IO       | MMIO read       |
+| nand_davinci_readecc                  | 169  | 1bit ECC IO     | nandfecc read   |
+| nand_davinci_enable_hwecc             | 179  | 1bit ECC 시퀀스 | nandfcr write   |
+| nand_davinci_4bit_enable_hwecc        | 477  | 4bit ECC 시퀀스 | nandfcr write   |
+| nand_davinci_4bit_readecc             | 503  | 4bit ECC IO     | nand4bitecc read|
+| nand_davinci_dev_ready                | 732  | 컨트롤러 상태   | nandfsr read    |
+| davinci_nand_init                     | 737  | 드라이버 조립   | callback 결합   |
+| davinci_nand_probe                    | 792  | DM 진입점       | nand_scan 호출  |
+| board_nand_init                       | 823  | 보드 진입점     | uclass 조회     |
+
+------------------------------------------------------------
+관찰: 명령 시퀀서 / ECC / DMA / 데이터 IO 가 한 파일에 섞임.
+4가지 모드(HW1bit, HW4bit, SW, KEYSTONE)가 #ifdef 로 갈림.
+------------------------------------------------------------
+
+[Claude] 책임 분리 제안 (3-way split)
+
+  davinci_nand_io.c       <-- read_buf / write_buf / hwcontrol
+  davinci_nand_ecc.c      <-- *_readecc / *_enable_hwecc / *_calculate
+  davinci_nand_probe.c    <-- davinci_nand_init / probe / board_nand_init
+
+------------------------------------------------------------
+비트필드 매크로 가독성 개선 — line 199-208
+------------------------------------------------------------
+[현행 코드]
+    /* Squeeze 4 bytes ECC into 3 bytes by removing RESERVED bits  */
+    /* and shifting. RESERVED bits are 31 to 28 and 15 to 12.       */
+    tmp = (tmp & 0x00000fff) | ((tmp & 0x0fff0000) >> 4);
+
+[Claude diff — FIELD_PREP / FIELD_GET 변환]
+
+--- a/drivers/mtd/nand/raw/davinci_nand.c
++++ b/drivers/mtd/nand/raw/davinci_nand.c
+@@ -40,6 +40,9 @@
+ #define NAND_TIMEOUT          10240
+ #define NAND_ECC_BUSY         0xC
++#define NAND_ECC_LO_MASK      GENMASK(11, 0)   /* bits 0..11   */
++#define NAND_ECC_HI_MASK      GENMASK(27, 16)  /* bits 16..27  */
++#define NAND_ECC_PACK(v)      (FIELD_GET(NAND_ECC_LO_MASK, v) | \
++                               (FIELD_GET(NAND_ECC_HI_MASK, v) << 12))
+ #define NAND_4BITECC_MASK     0x03FF03FF
+@@ -197,9 +200,7 @@ static int nand_davinci_calculate_ecc(...)
+     tmp = nand_davinci_readecc(mtd);
+-    /* Squeeze 4 bytes ECC into 3 bytes by removing RESERVED bits */
+-    /* and shifting. RESERVED bits are 31 to 28 and 15 to 12.     */
+-    tmp = (tmp & 0x00000fff) | ((tmp & 0x0fff0000) >> 4);
++    tmp = NAND_ECC_PACK(tmp);   /* 24bit packed ECC */
+     tmp = ~tmp;
+
+------------------------------------------------------------
+효과:
+  * 매직넘버 0x00000fff / 0x0fff0000 / >>4 가 의미를 가진다
+  * GENMASK + FIELD_GET 은 Linux/U-Boot 표준
+  * NAND_ECC_BUSY (line 42) 도 GENMASK(3,2) 형태로 통일 가능
+  * 같은 패턴이 4bit_calculate_ecc(line 525~) 에도 적용 가능
+------------------------------------------------------------
+
+[Claude] 다음 단계 추천:
+  1. davinci_nand_ecc.c 로 ECC 4종 분리 (CONFIG_*_ECC 통합)
+  2. nand_davinci_dev_ready: readl_poll_timeout_atomic 으로 교체
+  3. board_nand_init: DM 전용으로 게이팅, 레거시 분기 제거
+
+[done] 분석 완료. 26 line 비트시프트 -> 1 line 매크로.
