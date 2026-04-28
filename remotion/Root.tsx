@@ -1,5 +1,6 @@
 import React from "react";
 import { Composition } from "remotion";
+import { V1Timeline } from "./compositions/V1Timeline";
 import { V9SavingsChart } from "./compositions/V9SavingsChart";
 
 const Placeholder: React.FC = () => null;
@@ -11,6 +12,14 @@ export const RemotionRoot: React.FC = () => {
         id="placeholder"
         component={Placeholder}
         durationInFrames={30}
+        fps={30}
+        width={1920}
+        height={1080}
+      />
+      <Composition
+        id="V1-timeline"
+        component={V1Timeline}
+        durationInFrames={90 * 30}
         fps={30}
         width={1920}
         height={1080}
