@@ -10,6 +10,7 @@ import { V6SkillsSubagentsHooks } from "./compositions/V6SkillsSubagentsHooks";
 import { V8BeforeAfter } from "./compositions/V8BeforeAfter";
 import { V9SavingsChart } from "./compositions/V9SavingsChart";
 import { V7ALegacyC } from "./compositions/V7ALegacyC";
+import { V7CBuild } from "./compositions/V7CBuild";
 
 const Placeholder: React.FC = () => null;
 
@@ -99,6 +100,14 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="V7-A-legacy-c"
         component={V7ALegacyC}
+        durationInFrames={90 * 30}
+        fps={30}
+        width={1920}
+        height={1080}
+      />
+      <Composition
+        id="V7-C-build"
+        component={V7CBuild}
         durationInFrames={90 * 30}
         fps={30}
         width={1920}
