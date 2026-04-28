@@ -13,5 +13,16 @@
     "demos:install-tools": "bash demos/scripts/install-tools.sh",
     "demos:clone-uboot": "bash demos/scripts/clone-uboot.sh"
   },
-  "packageManager": "pnpm@9.0.0"
+  "packageManager": "pnpm@9.0.0",
+  "dependencies": {
+    "next": "15",
+    "react": "19",
+    "react-dom": "19"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^6.0.3"
+  }
 }
