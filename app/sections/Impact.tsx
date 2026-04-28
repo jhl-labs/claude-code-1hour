@@ -1,7 +1,9 @@
 import { ScrollSection } from "@/app/components/ScrollSection";
-import { VideoPlaceholder } from "@/app/components/VideoPlaceholder";
+import { VideoPlayer } from "@/app/components/VideoPlayer";
 import { Card } from "@/app/components/Card";
 import { sections } from "@/app/lib/sections";
+import { V8BeforeAfter } from "@/remotion/compositions/V8BeforeAfter";
+import { V9SavingsChart } from "@/remotion/compositions/V9SavingsChart";
 
 const meta = sections.find((s) => s.id === "impact")!;
 
@@ -25,12 +27,20 @@ export function Impact({ onEnter }: { onEnter?: (id: typeof meta.id) => void }) 
         <div>
           <div className="text-xs uppercase tracking-wider text-ink-muted">V8 · 90초</div>
           <h3 className="mt-1 mb-3 text-xl font-semibold">Before / After</h3>
-          <VideoPlaceholder videoId="V8" note="좌: 사람 / 우: Claude — 27분 vs 2분 30초" />
+          <VideoPlayer
+            composition={V8BeforeAfter}
+            inputProps={{}}
+            durationInFrames={90 * 30}
+          />
         </div>
         <div>
           <div className="text-xs uppercase tracking-wider text-ink-muted">V9 · 60초</div>
           <h3 className="mt-1 mb-3 text-xl font-semibold">시간 절감 차트</h3>
-          <VideoPlaceholder videoId="V9" note="막대 그래프 애니. 마지막 막대(문서화)는 다른 색 — 0 → 1" />
+          <VideoPlayer
+            composition={V9SavingsChart}
+            inputProps={{}}
+            durationInFrames={60 * 30}
+          />
         </div>
       </div>
 

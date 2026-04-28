@@ -1,5 +1,6 @@
 import { ScrollSection } from "@/app/components/ScrollSection";
-import { VideoPlaceholder } from "@/app/components/VideoPlaceholder";
+import { VideoPlayer } from "@/app/components/VideoPlayer";
+import { V1Timeline } from "@/remotion/compositions/V1Timeline";
 import { Card } from "@/app/components/Card";
 import { Callout } from "@/app/components/Callout";
 import { sections } from "@/app/lib/sections";
@@ -26,7 +27,11 @@ export function History({ onEnter }: { onEnter?: (id: typeof meta.id) => void })
           </p>
         </div>
         <div>
-          <VideoPlaceholder videoId="V1" note="역사 타임라인 (90초)" />
+          <VideoPlayer
+            composition={V1Timeline}
+            inputProps={{}}
+            durationInFrames={90 * 30}
+          />
         </div>
       </div>
 

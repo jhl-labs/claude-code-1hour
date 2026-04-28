@@ -1,5 +1,6 @@
 import { ScrollSection } from "@/app/components/ScrollSection";
-import { VideoPlaceholder } from "@/app/components/VideoPlaceholder";
+import { VideoPlayer } from "@/app/components/VideoPlayer";
+import { V0HeroLoop } from "@/remotion/compositions/V0HeroLoop";
 import { sections } from "@/app/lib/sections";
 
 const meta = sections.find((s) => s.id === "hero")!;
@@ -25,7 +26,13 @@ export function Hero({ onEnter }: { onEnter?: (id: typeof meta.id) => void }) {
           <div className="mt-10 text-sm text-ink-muted">↓ 시작</div>
         </div>
         <div className="opacity-90">
-          <VideoPlaceholder videoId="V0" note="Hero 배경 루프 · 임베디드 데모 하이라이트 (15초)" />
+          <VideoPlayer
+            composition={V0HeroLoop}
+            inputProps={{}}
+            durationInFrames={15 * 30}
+            loop
+            controls={false}
+          />
         </div>
       </div>
     </ScrollSection>
