@@ -1,8 +1,31 @@
+"use client";
+import { useCallback, useState } from "react";
+import { SideIndex } from "@/app/components/SideIndex";
+import { ProgressBar } from "@/app/components/ProgressBar";
+import { Hero } from "@/app/sections/Hero";
+import { History } from "@/app/sections/History";
+import { Features } from "@/app/sections/Features";
+import { EmbeddedDemos } from "@/app/sections/EmbeddedDemos";
+import { Impact } from "@/app/sections/Impact";
+import { GettingStarted } from "@/app/sections/GettingStarted";
+import { QA } from "@/app/sections/QA";
+import type { SectionMeta } from "@/app/lib/sections";
+
 export default function Page() {
+  const [activeId, setActiveId] = useState<SectionMeta["id"] | null>(null);
+  // 안정 참조: ScrollSection의 onEnter effect deps가 매 렌더 변하지 않도록.
+  const setActiveIdCb = useCallback((id: SectionMeta["id"]) => setActiveId(id), []);
   return (
-    <main className="min-h-screen p-8">
-      <h1 className="text-3xl font-bold text-accent">Claude Code 1시간 — 작업 중</h1>
-      <p className="mt-4 text-ink-soft">한글 본문 / English body / <code className="font-mono">code()</code></p>
+    <main>
+      <SideIndex activeId={activeId} />
+      <ProgressBar activeId={activeId} />
+      <Hero onEnter={setActiveIdCb} />
+      <History onEnter={setActiveIdCb} />
+      <Features onEnter={setActiveIdCb} />
+      <EmbeddedDemos onEnter={setActiveIdCb} />
+      <Impact onEnter={setActiveIdCb} />
+      <GettingStarted onEnter={setActiveIdCb} />
+      <QA onEnter={setActiveIdCb} />
     </main>
   );
 }
