@@ -12,6 +12,7 @@ import { V9SavingsChart } from "./compositions/V9SavingsChart";
 import { V7ALegacyC } from "./compositions/V7ALegacyC";
 import { V7CBuild } from "./compositions/V7CBuild";
 import { V7EUnitTest } from "./compositions/V7EUnitTest";
+import { V7HDocs } from "./compositions/V7HDocs";
 
 const Placeholder: React.FC = () => null;
 
@@ -117,6 +118,14 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="V7-E-unit-test"
         component={V7EUnitTest}
+        durationInFrames={90 * 30}
+        fps={30}
+        width={1920}
+        height={1080}
+      />
+      <Composition
+        id="V7-H-docs"
+        component={V7HDocs}
         durationInFrames={90 * 30}
         fps={30}
         width={1920}
