@@ -1,3 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root { color-scheme: dark; }
-html, body { margin: 0; padding: 0; background: #0a0a0a; color: #f5f5f5; }
+html, body { margin: 0; padding: 0; }
+body { @apply bg-bg text-ink font-sans antialiased; }
 * { box-sizing: border-box; }
