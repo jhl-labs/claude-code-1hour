@@ -19,7 +19,7 @@ export function ProgressBar({ activeId }: Props) {
       <div className="flex items-center gap-3">
         <span className="font-mono text-accent">{label}</span>
         <span className="text-ink-muted">·</span>
-        <span>남은 ~{remaining}분</span>
+        <span>남은 약 {remaining}분</span>
         <span className="text-ink-muted">·</span>
         <span>{percent}%</span>
       </div>

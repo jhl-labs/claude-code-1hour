@@ -7,7 +7,7 @@ describe("ProgressBar", () => {
     render(<ProgressBar activeId="features" />);
     expect(screen.getByText(/§2 핵심 기능/)).toBeInTheDocument();
     // features 13 + embedded 27 + impact 5 + getting 3 + qa 5 = 53분
-    expect(screen.getByText(/남은 ~53분/)).toBeInTheDocument();
+    expect(screen.getByText(/남은 약 53분/)).toBeInTheDocument();
   });
 
   it("activeId가 null이면 숨긴다", () => {

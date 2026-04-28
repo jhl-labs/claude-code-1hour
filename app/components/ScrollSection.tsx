@@ -19,7 +19,7 @@ export function ScrollSection({ section, onEnter, children }: Props) {
       ref={ref}
       id={section.id}
       data-section-id={section.id}
-      className="min-h-screen flex flex-col justify-center px-12 py-20"
+      className="min-h-screen flex flex-col justify-center px-8 py-20 lg:pl-64 lg:pr-16 xl:pr-24"
     >
       {children}
     </section>
