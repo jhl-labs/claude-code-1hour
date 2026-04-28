@@ -20,6 +20,7 @@
     "@remotion/cli": "^4.0.452",
     "@remotion/player": "^4.0.452",
     "@remotion/renderer": "^4.0.452",
+    "mermaid": "^11.14.0",
     "next": "^15.5.15",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
