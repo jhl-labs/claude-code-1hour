@@ -9,13 +9,13 @@ importers:
   .:
     dependencies:
       next:
-        specifier: '15'
+        specifier: ^15.5.15
         version: 15.5.15(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       react:
-        specifier: '19'
+        specifier: ^19.2.5
         version: 19.2.5
       react-dom:
-        specifier: '19'
+        specifier: ^19.2.5
         version: 19.2.5(react@19.2.5)
     devDependencies:
       '@tailwindcss/typography':
@@ -37,11 +37,11 @@ importers:
         specifier: ^8.5.12
         version: 8.5.12
       tailwindcss:
-        specifier: '3'
+        specifier: ^3.4.19
         version: 3.4.19
       typescript:
-        specifier: ^6.0.3
-        version: 6.0.3
+        specifier: ^5.9.0
+        version: 5.9.3
 
 packages:
 
@@ -664,8 +664,8 @@ packages:
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
-  typescript@6.0.3:
-    resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
+  typescript@5.9.3:
+    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -1233,7 +1233,7 @@ snapshots:
 
   tslib@2.8.1: {}
 
-  typescript@6.0.3: {}
+  typescript@5.9.3: {}
 
   undici-types@7.19.2: {}
 
