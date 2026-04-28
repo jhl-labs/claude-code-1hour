@@ -1,0 +1,17 @@
+{
+  "name": "claude-code-1hour",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "remotion:studio": "remotion studio",
+    "demos:install-tools": "bash demos/scripts/install-tools.sh",
+    "demos:clone-uboot": "bash demos/scripts/clone-uboot.sh"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

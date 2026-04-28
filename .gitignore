@@ -1,0 +1,19 @@
+node_modules/
+.next/
+out/
+.turbo/
+
+# 강의 데모 산출물 (외부 리소스)
+demos/uboot/
+demos/recordings/
+
+# Remotion 최종 export
+public/rendered/
+
+# 환경
+.env*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
