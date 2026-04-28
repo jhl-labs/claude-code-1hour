@@ -9,11 +9,10 @@ import { V5Mcp } from "./compositions/V5Mcp";
 import { V6SkillsSubagentsHooks } from "./compositions/V6SkillsSubagentsHooks";
 import { V8BeforeAfter } from "./compositions/V8BeforeAfter";
 import { V9SavingsChart } from "./compositions/V9SavingsChart";
-import { V7ALegacyC } from "./compositions/V7ALegacyC";
-import { V7CBuild } from "./compositions/V7CBuild";
-import { V7EUnitTest } from "./compositions/V7EUnitTest";
-import { V7HDocs } from "./compositions/V7HDocs";
-import { V11Install } from "./compositions/V11Install";
+
+// NOTE: V7-A/C/E/H + V11 은 더 이상 Remotion 모션그래픽이 아니라
+// 진짜 터미널 mp4 (public/videos/V7-*.mp4) 로 임베드된다.
+// composition 파일은 revert 가능성을 위해 남겨두지만 Root 등록은 빼둔다.
 
 const Placeholder: React.FC = () => null;
 
@@ -96,46 +95,6 @@ export const RemotionRoot: React.FC = () => {
         id="V9-savings-chart"
         component={V9SavingsChart}
         durationInFrames={60 * 30}
-        fps={30}
-        width={1920}
-        height={1080}
-      />
-      <Composition
-        id="V7-A-legacy-c"
-        component={V7ALegacyC}
-        durationInFrames={90 * 30}
-        fps={30}
-        width={1920}
-        height={1080}
-      />
-      <Composition
-        id="V7-C-build"
-        component={V7CBuild}
-        durationInFrames={90 * 30}
-        fps={30}
-        width={1920}
-        height={1080}
-      />
-      <Composition
-        id="V7-E-unit-test"
-        component={V7EUnitTest}
-        durationInFrames={90 * 30}
-        fps={30}
-        width={1920}
-        height={1080}
-      />
-      <Composition
-        id="V7-H-docs"
-        component={V7HDocs}
-        durationInFrames={90 * 30}
-        fps={30}
-        width={1920}
-        height={1080}
-      />
-      <Composition
-        id="V11-install"
-        component={V11Install}
-        durationInFrames={30 * 30}
         fps={30}
         width={1920}
         height={1080}

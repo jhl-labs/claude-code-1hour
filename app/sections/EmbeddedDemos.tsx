@@ -1,13 +1,9 @@
 import { ScrollSection } from "@/app/components/ScrollSection";
-import { VideoPlayer } from "@/app/components/VideoPlayer";
+import { Mp4Video } from "@/app/components/Mp4Video";
 import { Card } from "@/app/components/Card";
 import { Callout } from "@/app/components/Callout";
 import { CodeBlock } from "@/app/components/CodeBlock";
 import { sections } from "@/app/lib/sections";
-import { V7ALegacyC } from "@/remotion/compositions/V7ALegacyC";
-import { V7CBuild } from "@/remotion/compositions/V7CBuild";
-import { V7EUnitTest } from "@/remotion/compositions/V7EUnitTest";
-import { V7HDocs } from "@/remotion/compositions/V7HDocs";
 
 const meta = sections.find((s) => s.id === "embedded-demos")!;
 
@@ -19,8 +15,7 @@ type Demo = {
   prompt: string;
   result: string;
   emphasis: string;
-  composition: React.ComponentType<Record<string, never>>;
-  durationSec: number;
+  videoSrc: string;
 };
 
 const demos: Demo[] = [
@@ -36,8 +31,7 @@ const demos: Demo[] = [
       "함수 책임 마크다운 표 + Mermaid 다이어그램 + 매크로 → FIELD_PREP/FIELD_GET 변환 diff",
     emphasis:
       "10년 된 코드를 30초에 의미 단위로 분리해 읽음. 코드리뷰 시작점이 0이 아니라 70%.",
-    composition: V7ALegacyC,
-    durationSec: 90,
+    videoSrc: "/videos/V7-A-legacy-c.mp4",
   },
   {
     id: "C",
@@ -50,8 +44,7 @@ const demos: Demo[] = [
       "Kconfig·Makefile·defconfig 동시 diff + `make sandbox_defconfig && make` 실제 통과",
     emphasis:
       "여러 디렉토리에 흩어진 빌드 파일을 동시에·일관되게. 가장 자주 깜빡하는 부분.",
-    composition: V7CBuild,
-    durationSec: 90,
+    videoSrc: "/videos/V7-C-build.mp4",
   },
   {
     id: "E",
@@ -64,8 +57,7 @@ const demos: Demo[] = [
       "test/dm/nand_<ctrl>.c 신규 + Mock 레지스터 + Kconfig·Makefile 등록 + ./test/py/test.py PASS",
     emphasis:
       "Mock·픽스처가 귀찮아 미루던 단위테스트가 1분에 만들어지고 host에서 돌아감. 보드 없이 회귀 검증.",
-    composition: V7EUnitTest,
-    durationSec: 90,
+    videoSrc: "/videos/V7-E-unit-test.mp4",
   },
   {
     id: "H",
@@ -76,8 +68,7 @@ const demos: Demo[] = [
       "이 드라이버의 컨트롤러 레지스터 맵을 마크다운 표로(오프셋·비트필드·의미). 'NAND read page' 명령 흐름을 Mermaid 시퀀스 다이어그램으로(CPU/컨트롤러/NAND chip).",
     result: "레지스터 맵 표 + Mermaid 시퀀스 다이어그램 + 메모리 트레이닝 흐름도",
     emphasis: "데이터시트와 코드 사이의 갭을 5분에 메움. 속도가 아니라 '안 하던 걸 하게 됨'.",
-    composition: V7HDocs,
-    durationSec: 90,
+    videoSrc: "/videos/V7-H-docs.mp4",
   },
 ];
 
@@ -115,11 +106,7 @@ export function EmbeddedDemos({
                   {d.emphasis}
                 </Callout>
               </div>
-              <VideoPlayer
-                composition={d.composition}
-                inputProps={{}}
-                durationInFrames={d.durationSec * 30}
-              />
+              <Mp4Video src={d.videoSrc} loop />
             </div>
           </Card>
         ))}
