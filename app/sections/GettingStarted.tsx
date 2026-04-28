@@ -1,9 +1,10 @@
 import { ScrollSection } from "@/app/components/ScrollSection";
-import { VideoPlaceholder } from "@/app/components/VideoPlaceholder";
+import { VideoPlayer } from "@/app/components/VideoPlayer";
 import { CodeBlock } from "@/app/components/CodeBlock";
 import { Card } from "@/app/components/Card";
 import { Callout } from "@/app/components/Callout";
 import { sections } from "@/app/lib/sections";
+import { V11Install } from "@/remotion/compositions/V11Install";
 import { QRCodeSVG } from "qrcode.react";
 
 const meta = sections.find((s) => s.id === "getting-started")!;
@@ -38,7 +39,11 @@ export function GettingStarted({ onEnter }: { onEnter?: (id: typeof meta.id) => 
           <div>
             <div className="text-xs uppercase tracking-wider text-ink-muted">V11 · 30초</div>
             <h3 className="mt-1 mb-3 text-xl font-semibold">설치 & 첫 명령</h3>
-            <VideoPlaceholder videoId="V11" note="설치 → claude → 첫 질문" />
+            <VideoPlayer
+              composition={V11Install}
+              inputProps={{}}
+              durationInFrames={30 * 30}
+            />
           </div>
           <Card eyebrow="템플릿" title="CLAUDE.md 첫 5~10줄">
             <CodeBlock lang="markdown">{claudeMdTemplate}</CodeBlock>
