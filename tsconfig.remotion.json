@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "jsx": "preserve",
+    "baseUrl": "./node_modules"
+  },
+  "include": ["remotion/**/*.ts", "remotion/**/*.tsx", "remotion.config.ts"],
+  "exclude": ["node_modules", ".next"]
+}
