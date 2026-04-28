@@ -42,7 +42,8 @@ export function Mp4Video({
     >
       <video
         ref={videoRef}
-        src={src}
+        // 캐시 버스트 — 영상 갱신 시 브라우저가 옛 mp4를 그대로 쓰지 않도록.
+        src={`${src}?v=20260428-2300`}
         className="w-full h-full object-contain bg-black"
         controls={controls}
         loop={loop}
