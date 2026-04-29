@@ -18,6 +18,7 @@ type Demo = {
   result: string;
   emphasis: string;
   videoSrc: string;
+  poster: string;
   /** 영상 안에서 어떤 장면이 언제 나오는지 — 강사가 옆에 붙여 설명할 가이드 */
   scenes: SceneCue[];
   /** 강사가 영상 보는 동안 짚어줄 핵심 한 줄 */
@@ -38,6 +39,7 @@ const demos: Demo[] = [
     emphasis:
       "10년 된 코드를 30초에 의미 단위로 분리해 읽음. 코드리뷰 시작점이 0이 아니라 70%.",
     videoSrc: "/videos/V7-A-legacy-c.mp4",
+    poster: "/videos/posters/V7-A-legacy-c.jpg",
     watchFor:
       "사람이 똑같이 하려면 정독에만 30~60분. Claude는 5번의 도구 호출로 끝냄.",
     scenes: [
@@ -62,6 +64,7 @@ const demos: Demo[] = [
     emphasis:
       "여러 디렉토리에 흩어진 빌드 파일을 동시에·일관되게. 가장 자주 깜빡하는 부분.",
     videoSrc: "/videos/V7-C-build.mp4",
+    poster: "/videos/posters/V7-C-build.jpg",
     watchFor:
       "Kconfig·Makefile·defconfig 3 파일 동시에. sandbox + am335x 두 보드에서 동시 검증.",
     scenes: [
@@ -86,6 +89,7 @@ const demos: Demo[] = [
     emphasis:
       "Mock·픽스처가 귀찮아 미루던 단위테스트가 1분에 만들어지고 host에서 돌아감. 보드 없이 회귀 검증.",
     videoSrc: "/videos/V7-E-unit-test.mp4",
+    poster: "/videos/posters/V7-E-unit-test.jpg",
     watchFor:
       "사람은 mock 만들기 귀찮아 미루던 일. Claude는 5 케이스 + coverage까지 한 번에.",
     scenes: [
@@ -107,6 +111,7 @@ const demos: Demo[] = [
     result: "레지스터 맵 표 + Mermaid 시퀀스 다이어그램 + 메모리 트레이닝 흐름도",
     emphasis: "데이터시트와 코드 사이의 갭을 5분에 메움. 속도가 아니라 '안 하던 걸 하게 됨'.",
     videoSrc: "/videos/V7-H-docs.mp4",
+    poster: "/videos/posters/V7-H-docs.jpg",
     watchFor:
       "사람은 1~2일 걸려 안 하던 일. Claude는 표 + 다이어그램 + 매트릭스 + 성능표를 동시에.",
     scenes: [
@@ -137,41 +142,47 @@ export function EmbeddedDemos({
       <div className="grid grid-cols-1 gap-6">
         {demos.map((d) => (
           <Card key={d.id} eyebrow={`데모 ${d.id} · ${d.videoId}`} title={d.title}>
-            <div className="grid grid-cols-1 lg:grid-cols-[1.2fr,1fr] gap-6 items-start">
-              <div className="space-y-4">
-                <div>
-                  <div className="text-xs uppercase tracking-wider text-ink-muted">Setup</div>
-                  <p className="mt-1">{d.setup}</p>
+            <div className="space-y-6">
+              {/* 상단: 영상 (꽉 채움) */}
+              <Mp4Video src={d.videoSrc} poster={d.poster} loop />
+
+              {/* 중단: 좌(시나리오) + 우(장면 가이드) */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                <div className="space-y-4">
+                  <div>
+                    <div className="text-xs uppercase tracking-wider text-ink-muted">Setup</div>
+                    <p className="mt-1">{d.setup}</p>
+                  </div>
+                  <div>
+                    <div className="text-xs uppercase tracking-wider text-ink-muted">Prompt</div>
+                    <CodeBlock lang="markdown">{d.prompt}</CodeBlock>
+                  </div>
+                  <div>
+                    <div className="text-xs uppercase tracking-wider text-ink-muted">Claude 결과</div>
+                    <p className="mt-1 text-ink-soft">{d.result}</p>
+                  </div>
                 </div>
-                <div>
-                  <div className="text-xs uppercase tracking-wider text-ink-muted">Prompt</div>
-                  <CodeBlock lang="markdown">{d.prompt}</CodeBlock>
-                </div>
-                <div>
-                  <div className="text-xs uppercase tracking-wider text-ink-muted">Claude 결과</div>
-                  <p className="mt-1 text-ink-soft">{d.result}</p>
-                </div>
-                <Callout tone="info" title="강사 강조">
-                  {d.emphasis}
-                </Callout>
-              </div>
-              <div className="space-y-3">
-                <Mp4Video src={d.videoSrc} loop />
-                <div className="rounded-md bg-bg-soft px-4 py-3 ring-1 ring-white/5 text-xs">
-                  <div className="text-accent uppercase tracking-wider mb-2">
+
+                <div className="rounded-md bg-bg-soft px-4 py-4 ring-1 ring-white/5 text-sm">
+                  <div className="text-accent uppercase tracking-wider mb-2 text-xs">
                     영상에서 보실 것
                   </div>
-                  <p className="text-ink-soft mb-3 leading-relaxed">{d.watchFor}</p>
-                  <ul className="space-y-1 text-ink-soft">
+                  <p className="text-ink-soft mb-4 leading-relaxed">{d.watchFor}</p>
+                  <ul className="space-y-2 text-ink-soft">
                     {d.scenes.map((s) => (
                       <li key={s.at} className="flex gap-3">
                         <span className="font-mono text-accent shrink-0 w-12">{s.at}</span>
-                        <span>{s.label}</span>
+                        <span className="text-xs leading-relaxed">{s.label}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
               </div>
+
+              {/* 하단: 강사 강조 */}
+              <Callout tone="info" title="강사 강조">
+                {d.emphasis}
+              </Callout>
             </div>
           </Card>
         ))}
