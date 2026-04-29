@@ -6,12 +6,13 @@ import { sections } from "@/app/lib/sections";
 const meta = sections.find((s) => s.id === "hero")!;
 
 const agenda: { mins: string; title: string; note: string }[] = [
-  { mins: "0~6",   title: "§1 Claude Code 가 뭔가",      note: "한 줄 정의 · 왜 지금이 변곡점인가" },
-  { mins: "6~18",  title: "§2 핵심 5 가지",               note: "오늘 바로 쓸 3개 + 나중에 붙일 2개" },
-  { mins: "18~42", title: "§3 임베디드 라이브 데모 4 종",  note: "U-Boot NAND 컨트롤러 · 각 6분" },
-  { mins: "42~48", title: "§4 그래서 우리가 얻는 것",     note: "처리 속도보다 검토 품질과 밀도" },
-  { mins: "48~55", title: "§5 시작하기",                   note: "오늘 30분 · 이번 주 7일" },
-  { mins: "55~60", title: "Q & A",                          note: "라이브 우선 6문답" },
+  { mins: "0~2",   title: "오프닝",                        note: "오늘 60분에 가져갈 메시지 1줄" },
+  { mins: "2~6",   title: "§1 Claude Code 가 뭔가",        note: "한 줄 정의 · 왜 지금이 변곡점인가" },
+  { mins: "6~18",  title: "§2 핵심 5 가지",                 note: "오늘 바로 쓸 3개 + 나중에 붙일 2개" },
+  { mins: "18~42", title: "§3 임베디드 라이브 데모 4 종",   note: "U-Boot NAND 컨트롤러 · 각 6분" },
+  { mins: "42~48", title: "§4 그래서 우리가 얻는 것",       note: "처리 속도보다 검토 품질과 밀도" },
+  { mins: "48~55", title: "§5 시작하기",                    note: "오늘 30분 · 이번 주 7일" },
+  { mins: "55~60", title: "Q & A",                           note: "라이브 우선 6문답" },
 ];
 
 export function Hero({ onEnter }: { onEnter?: (id: typeof meta.id) => void }) {
@@ -36,10 +37,14 @@ export function Hero({ onEnter }: { onEnter?: (id: typeof meta.id) => void }) {
           <div className="mt-6 flex flex-wrap gap-2 text-xs">
             <span className="rounded-full bg-bg-soft px-3 py-1 ring-1 ring-white/10">U-Boot</span>
             <span className="rounded-full bg-bg-soft px-3 py-1 ring-1 ring-white/10">NAND / MTD</span>
+            <span className="rounded-full bg-bg-soft px-3 py-1 ring-1 ring-white/10">DDR / PHY</span>
             <span className="rounded-full bg-bg-soft px-3 py-1 ring-1 ring-white/10">Kconfig · Makefile</span>
             <span className="rounded-full bg-bg-soft px-3 py-1 ring-1 ring-white/10">DM · sandbox</span>
             <span className="rounded-full bg-bg-soft px-3 py-1 ring-1 ring-white/10">C / 비트필드</span>
           </div>
+          <p className="mt-3 text-xs text-ink-muted max-w-xl leading-relaxed">
+            오늘 데모는 NAND 위주지만, DDR 컨트롤러·PHY 캘리브레이션·부트로더 코드도 같은 패턴으로 적용됩니다.
+          </p>
           <div className="mt-10 text-sm text-ink-muted">↓ 시작</div>
         </div>
         <div className="opacity-90">
@@ -57,7 +62,7 @@ export function Hero({ onEnter }: { onEnter?: (id: typeof meta.id) => void }) {
           <div className="mt-16">
         <div className="mb-4 flex items-baseline justify-between">
           <h2 className="text-xl font-semibold">오늘 60분 흐름</h2>
-          <span className="text-xs text-ink-muted">데모 24분 · 설명 31분 · Q&A 5분</span>
+          <span className="text-xs text-ink-muted">데모 24분 · 슬라이드 31분 · Q&A 5분</span>
         </div>
         <ol className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {agenda.map((row) => (

@@ -17,6 +17,7 @@ type FeatureItem = {
   body: string[];
   embedded: string;
   example: { label: string; text: string };
+  extra?: { label: string; text: string };
   composition: React.ComponentType<Record<string, never>>;
   durationSec: number;
 };
@@ -35,6 +36,10 @@ const features: FeatureItem[] = [
     example: {
       label: "예",
       text: '"ECC 4비트 에러 처리 로직을 찾아서, 타임아웃 코드와 같이 묶여 있는지 확인해줘" — 5번의 도구 호출로 끝.',
+    },
+    extra: {
+      label: "Plan mode",
+      text: 'Shift+Tab 으로 큰 작업 전 "계획 먼저 검토" 모드 진입. 빌드 깨뜨릴 수정 전에 사람이 한 번 확인.',
     },
     composition: V2CliLoop as React.ComponentType<Record<string, never>>,
     durationSec: 60,
@@ -156,6 +161,12 @@ export function Features({ onEnter }: { onEnter?: (id: typeof meta.id) => void }
                   <span className="text-accent font-semibold">{f.example.label}: </span>
                   {f.example.text}
                 </div>
+                {f.extra && (
+                  <div className="text-xs text-ink-muted leading-relaxed">
+                    <span className="text-accent font-semibold">{f.extra.label}: </span>
+                    {f.extra.text}
+                  </div>
+                )}
               </div>
               <VideoPlayer
                 composition={f.composition}
@@ -169,28 +180,28 @@ export function Features({ onEnter }: { onEnter?: (id: typeof meta.id) => void }
 
       {/* 5가지를 한 표로 — 어떤 순서로 손에 익혀야 하나 */}
       <div className="mt-10">
-        <h3 className="mb-3 text-xl font-semibold">손에 익히는 순서</h3>
+        <h3 className="mb-3 text-xl font-semibold">기능 도입 순서 — 한 번에 다 가져가지 말 것</h3>
         <div className="overflow-x-auto rounded-md ring-1 ring-white/5 bg-bg-soft">
           <table className="w-full text-sm">
             <thead className="text-ink-muted">
               <tr className="text-left">
-                <th className="px-4 py-3">단계</th>
+                <th className="px-4 py-3 w-24">시점</th>
                 <th className="px-4 py-3">기능</th>
                 <th className="px-4 py-3">언제 도입</th>
                 <th className="px-4 py-3">사람의 일</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              <tr><td className="px-4 py-2.5">오늘</td><td>CLI 루프 + 도구</td><td>설치 직후</td><td>질문하고 빌드/테스트 결과 검토</td></tr>
-              <tr><td className="px-4 py-2.5">이번 주</td><td>CLAUDE.md</td><td>같은 실수 2번 반복될 때</td><td>5~10줄 작성·갱신</td></tr>
-              <tr><td className="px-4 py-2.5">2주차</td><td>Skills</td><td>같은 절차 3번 이상 반복</td><td>팀 표준 절차를 Skill 로 고정</td></tr>
-              <tr><td className="px-4 py-2.5">1개월차</td><td>MCP</td><td>외부 시스템(Jira·GitHub·빌드팜) 연계</td><td>MCP 서버 1개 붙여 보기</td></tr>
-              <tr><td className="px-4 py-2.5">정착 단계</td><td>Subagents · Hooks</td><td>팀 워크플로우 표준화</td><td>자동 게이트와 금기 정의</td></tr>
+              <tr><td className="px-4 py-2.5 font-mono text-xs text-accent">Day 1</td><td>CLI 루프 + 도구</td><td>설치 직후</td><td>질문하고 빌드/테스트 결과 검토</td></tr>
+              <tr><td className="px-4 py-2.5 font-mono text-xs text-accent">Day 3</td><td>CLAUDE.md</td><td>같은 실수 2번 반복될 때</td><td>5~10줄 작성·갱신</td></tr>
+              <tr><td className="px-4 py-2.5 font-mono text-xs text-accent">Week 2</td><td>Skills</td><td>같은 절차 3번 이상 반복</td><td>팀 표준 절차를 Skill 로 고정</td></tr>
+              <tr><td className="px-4 py-2.5 font-mono text-xs text-accent">Month 1</td><td>MCP</td><td>외부 시스템(Jira·GitHub·빌드팜) 연계</td><td>MCP 서버 1개 붙여 보기</td></tr>
+              <tr><td className="px-4 py-2.5 font-mono text-xs text-accent">Month 2</td><td>Subagents · Hooks</td><td>팀 워크플로우 표준화</td><td>자동 게이트와 금기 정의</td></tr>
             </tbody>
           </table>
         </div>
         <p className="mt-3 text-xs text-ink-muted">
-          * 한 번에 다 도입하지 마세요. CLAUDE.md 1줄부터.
+          * 시점은 권장값. 팀 상황에 따라 늦춰도 무방. 단, 첫 줄(CLAUDE.md 1줄)은 오늘부터.
         </p>
       </div>
     </ScrollSection>

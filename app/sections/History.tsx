@@ -67,6 +67,19 @@ export function History({ onEnter }: { onEnter?: (id: typeof meta.id) => void })
         </div>
       </div>
 
+      {/* 메모리 컨트롤러 폭 보강 */}
+      <div className="mt-10">
+        <Callout tone="info" title="오늘 데모는 NAND, 그 다음은?">
+          <p className="leading-relaxed">
+            라이브 데모는 NAND/MTD 로 보여드리지만, 같은 패턴이 그대로 적용됩니다 — <strong>DDR
+            컨트롤러 캘리브레이션 코드</strong>(타이밍 파라미터 표 자동 정리), <strong>PHY 트레이닝 시퀀스</strong>
+            (시퀀스 다이어그램·실패 패턴 분류), <strong>부트로더 SPL 사이즈 분석</strong>
+            (<code className="font-mono text-xs">.map</code>·<code className="font-mono text-xs">bloat-o-meter</code> 결과 해석).
+            “레지스터 ↔ 데이터시트 ↔ 코드” 삼각관계가 있는 작업이면 거의 다 됩니다.
+          </p>
+        </Callout>
+      </div>
+
       {/* 데모를 볼 때 체크할 것 */}
       <div className="mt-12">
         <h3 className="mb-4 text-xl font-semibold">오늘 데모를 볼 때 체크할 것 3개</h3>
