@@ -1,28 +1,18 @@
 #!/usr/bin/env bash
-# fake-claude.sh — 진짜 Claude Code TUI 흐름을 흉내내는 시연용 스크립트
+# fake-claude.sh — 진짜 Claude Code TUI 를 흉내내는 시연용 스크립트
 #
-# 목적:
-#   - 진짜 claude CLI는 인증/사용자 정보 노출 위험으로 vhs 녹화 중 사용 불가
-#   - 그러나 영상에서는 "사용자 -> claude '<prompt>'" 가 진짜처럼 보여야 함
+# 두 가지 모드:
+#   1. 비인터랙티브  (`claude '<prompt>'`) — data-file 만 출력 후 종료
+#   2. 인터랙티브   (`claude` 단독)         — REPL 시뮬레이션
+#                                            > prompt 박스 → 응답 → > prompt → ...
+#                                            /exit 로 종료
 #
-# 사용법:
-#   fake-claude.sh <data-file>   # data-file 은 프롬프트+응답이 박힌 시연 스크립트
-#
-# data-file 디렉티브:
-#   @PROMPT <text>          사용자 입력 prompt 박스 출력
-#   @SLEEP <ms>             밀리초 단위 sleep
-#   @BULLET <color> <text>  Claude 도구 호출 라인 (● + 컬러)
-#   @INDENT <text>          도구 결과 (  ⎿  + 텍스트)
-#   @THINK <text>           Claude 사고 (● + cyan)
-#   @SECTION <text>         섹션 구분선 + 제목
-#   @FOOTER <text>          마지막 메타 (모델/시간)
-#   @RAW <text>             그대로 출력 (ANSI 컬러 escape 그대로 통과)
-#   @DONE                   완료 마크
-#   <text>                  그 외 모든 줄은 그대로 출력 (ANSI escape 통과)
+# data-file 디렉티브: @PROMPT, @SLEEP, @BULLET, @INDENT, @THINK, @SECTION,
+# @FOOTER, @DONE, @RAW, @COMMENT, 그 외 모든 줄은 그대로 출력.
 #
 # 절대 규칙:
 #   - 사용자 시스템 정보 (호스트명/홈경로/IP) 절대 출력 금지
-#   - 환경 변수 직접 안 읽음 ($USER/$HOME/$HOSTNAME 등 사용 X)
+#   - $USER/$HOME/$HOSTNAME 등 환경변수 직접 안 읽음
 
 set -u
 
@@ -57,80 +47,143 @@ color_for() {
     esac
 }
 
-# 한 줄 출력 + 짧은 sleep (자연스러운 스트리밍 효과)
-emit() {
-    printf '%b\n' "$1"
-}
-
 ms_sleep() {
     local ms="$1"
     awk "BEGIN{ system(\"sleep \" $ms / 1000) }" >/dev/null 2>&1 || sleep 0.05
 }
 
-# 진입 헤더 (진짜 Claude Code 첫 줄과 비슷하게)
-printf '%s%s%s\n' "$C_DIM" "─────────────────────────────────────────────────────────────" "$C_RESET"
+emit_response_body() {
+    # data-file 의 모든 줄을 directive 에 따라 출력
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        case "$line" in
+            '@PROMPT '*)
+                # 인터랙티브 모드에서는 사용자 prompt 입력이 별도이므로 무시
+                : ;;
+            '@SLEEP '*)
+                ms="${line#@SLEEP }"
+                ms=$((ms * 16 / 10))
+                ms_sleep "$ms"
+                ;;
+            '@BULLET '*)
+                rest="${line#@BULLET }"
+                color="${rest%% *}"
+                text="${rest#* }"
+                col="$(color_for "$color")"
+                printf '%s●%s %s\n' "$col" "$C_RESET" "$text"
+                ms_sleep 180
+                ;;
+            '@INDENT '*)
+                text="${line#@INDENT }"
+                printf '  %s⎿%s  %s\n' "$C_DIM" "$C_RESET" "$text"
+                ms_sleep 120
+                ;;
+            '@THINK '*)
+                text="${line#@THINK }"
+                printf '%s●%s %s%s%s\n' "$C_CYAN" "$C_RESET" "$C_DIM" "$text" "$C_RESET"
+                ms_sleep 240
+                ;;
+            '@SECTION '*)
+                text="${line#@SECTION }"
+                printf '\n%s%s%s\n' "$C_BOLD" "$text" "$C_RESET"
+                printf '%s%s%s\n' "$C_DIM" "─────────────────────────────────────────────────────────────" "$C_RESET"
+                ms_sleep 400
+                ;;
+            '@FOOTER '*)
+                text="${line#@FOOTER }"
+                printf '\n%s%s%s\n' "$C_DIM" "$text" "$C_RESET"
+                ms_sleep 200
+                ;;
+            '@DONE')
+                printf '\n%s✓%s %sTask complete%s\n' "$C_GREEN" "$C_RESET" "$C_BOLD" "$C_RESET"
+                ms_sleep 400
+                ;;
+            '@RAW '*)
+                text="${line#@RAW }"
+                printf '%b\n' "$text"
+                ms_sleep 60
+                ;;
+            '@COMMENT '*)
+                : ;;
+            '')
+                printf '\n'
+                ms_sleep 50
+                ;;
+            *)
+                printf '%s\n' "$line"
+                ms_sleep 60
+                ;;
+        esac
+    done < "$DATA_FILE"
+}
 
-while IFS= read -r line || [[ -n "$line" ]]; do
-    case "$line" in
-        '@PROMPT '*)
-            text="${line#@PROMPT }"
-            printf '\n%s>%s %s\n\n' "$C_BOLD" "$C_RESET" "$text"
-            ms_sleep 700
-            ;;
-        '@SLEEP '*)
-            ms="${line#@SLEEP }"
-            # 교육용 가독성을 위해 모든 SLEEP 값을 1.6x로 늘림
-            ms=$((ms * 16 / 10))
-            ms_sleep "$ms"
-            ;;
-        '@BULLET '*)
-            rest="${line#@BULLET }"
-            color="${rest%% *}"
-            text="${rest#* }"
-            col="$(color_for "$color")"
-            printf '%s●%s %s\n' "$col" "$C_RESET" "$text"
-            ms_sleep 180
-            ;;
-        '@INDENT '*)
-            text="${line#@INDENT }"
-            printf '  %s⎿%s  %s\n' "$C_DIM" "$C_RESET" "$text"
-            ms_sleep 120
-            ;;
-        '@THINK '*)
-            text="${line#@THINK }"
-            printf '%s●%s %s%s%s\n' "$C_CYAN" "$C_RESET" "$C_DIM" "$text" "$C_RESET"
-            ms_sleep 240
-            ;;
-        '@SECTION '*)
-            text="${line#@SECTION }"
-            printf '\n%s%s%s\n' "$C_BOLD" "$text" "$C_RESET"
-            printf '%s%s%s\n' "$C_DIM" "─────────────────────────────────────────────────────────────" "$C_RESET"
+# 인터랙티브 모드 판정: 두번째 인자가 'i' 또는 'interactive' 거나 stdin 이 tty
+MODE="${2:-auto}"
+if [[ "$MODE" == "auto" ]]; then
+    if [ -t 0 ]; then MODE="interactive"; else MODE="prompt"; fi
+fi
+
+# 진입 헤더 (구분선)
+print_separator() {
+    printf '%s%s%s\n' "$C_DIM" "─────────────────────────────────────────────────────────────" "$C_RESET"
+}
+
+if [[ "$MODE" == "interactive" ]]; then
+    # ── Welcome banner ──
+    printf '\n'
+    printf '%s%s★%s %s%sClaude Code v2.1.121%s  %s/help for shortcuts%s\n' \
+        "$C_BOLD" "$C_ORANGE" "$C_RESET" "$C_BOLD" "$C_ORANGE" "$C_RESET" "$C_DIM" "$C_RESET"
+    printf '%s%s%s\n' "$C_DIM" "  ~/u-boot · main · 2026-04-29" "$C_RESET"
+    printf '\n'
+    ms_sleep 800
+
+    # 첫 prompt 박스 — 사용자 입력은 .tape 의 Type 으로 옴
+    printf '%s╭───────────────────────────────────────────────────────────╮%s\n' "$C_DIM" "$C_RESET"
+    printf '%s│%s %s>%s ' "$C_DIM" "$C_RESET" "$C_BOLD" "$C_RESET"
+    # stdin 에서 한 줄 읽음 (사용자 입력)
+    IFS= read -r user_prompt
+    # 박스 닫기 + 입력 echo
+    printf '%s%s\n' "$user_prompt" ""
+    printf '%s╰───────────────────────────────────────────────────────────╯%s\n' "$C_DIM" "$C_RESET"
+    ms_sleep 600
+
+    # /exit 처리
+    if [[ "$user_prompt" == "/exit" ]] || [[ "$user_prompt" == "/quit" ]]; then
+        printf '\n%sGoodbye%s\n' "$C_DIM" "$C_RESET"
+        exit 0
+    fi
+
+    # 응답
+    emit_response_body
+    ms_sleep 800
+
+    # 다음 prompt 띄우고 한 줄 더 읽음 (대개 /exit)
+    printf '\n%s╭───────────────────────────────────────────────────────────╮%s\n' "$C_DIM" "$C_RESET"
+    printf '%s│%s %s>%s ' "$C_DIM" "$C_RESET" "$C_BOLD" "$C_RESET"
+    if IFS= read -r second_prompt; then
+        printf '%s\n' "$second_prompt"
+        printf '%s╰───────────────────────────────────────────────────────────╯%s\n' "$C_DIM" "$C_RESET"
+        if [[ "$second_prompt" != "/exit" && "$second_prompt" != "/quit" && -n "$second_prompt" ]]; then
+            # 두번째 응답이 필요하면 짧게 ack
             ms_sleep 400
-            ;;
-        '@FOOTER '*)
-            text="${line#@FOOTER }"
-            printf '\n%s%s%s\n' "$C_DIM" "$text" "$C_RESET"
-            ms_sleep 200
-            ;;
-        '@DONE')
-            printf '\n%s✓%s %sTask complete%s\n' "$C_GREEN" "$C_RESET" "$C_BOLD" "$C_RESET"
-            ms_sleep 400
-            ;;
-        '@RAW '*)
-            text="${line#@RAW }"
-            printf '%b\n' "$text"
-            ms_sleep 60
-            ;;
-        '@COMMENT '*)
-            : # 주석은 무시
-            ;;
-        '')
-            printf '\n'
-            ms_sleep 50
-            ;;
-        *)
-            printf '%s\n' "$line"
-            ms_sleep 60
-            ;;
-    esac
-done < "$DATA_FILE"
+            printf '\n%s●%s 다음 단계로 넘어갑니다…\n' "$C_CYAN" "$C_RESET"
+            ms_sleep 600
+        fi
+        printf '\n%sGoodbye%s\n' "$C_DIM" "$C_RESET"
+    fi
+else
+    # ── 비인터랙티브: data-file 의 @PROMPT 도 prompt 박스로 표시 ──
+    print_separator
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        case "$line" in
+            '@PROMPT '*)
+                text="${line#@PROMPT }"
+                printf '\n%s>%s %s\n\n' "$C_BOLD" "$C_RESET" "$text"
+                ms_sleep 700
+                ;;
+            *)
+                # 단일 줄 처리 — emit_response_body 와 동일 분기 재사용 위해 임시 파일
+                printf '%s\n' "$line"
+                ;;
+        esac
+    done < "$DATA_FILE"
+fi
