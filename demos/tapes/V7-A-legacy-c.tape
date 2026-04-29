@@ -39,4 +39,4 @@ Sleep 500ms
 Enter
 
 # Claude 응답 (약 10초) + 사용자가 읽을 시간 (60초)
-Sleep 70s
+Sleep 35s

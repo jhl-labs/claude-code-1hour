@@ -29,4 +29,4 @@ Type@45ms `claude '이 함수의 unit test를 sandbox에서 돌릴 수 있게 �
 Sleep 500ms
 Enter
 
-Sleep 70s
+Sleep 35s

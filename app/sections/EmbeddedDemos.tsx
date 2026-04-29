@@ -7,6 +7,8 @@ import { sections } from "@/app/lib/sections";
 
 const meta = sections.find((s) => s.id === "embedded-demos")!;
 
+type SceneCue = { at: string; label: string };
+
 type Demo = {
   id: "A" | "C" | "E" | "H";
   videoId: string;
@@ -16,6 +18,10 @@ type Demo = {
   result: string;
   emphasis: string;
   videoSrc: string;
+  /** 영상 안에서 어떤 장면이 언제 나오는지 — 강사가 옆에 붙여 설명할 가이드 */
+  scenes: SceneCue[];
+  /** 강사가 영상 보는 동안 짚어줄 핵심 한 줄 */
+  watchFor: string;
 };
 
 const demos: Demo[] = [
@@ -32,6 +38,17 @@ const demos: Demo[] = [
     emphasis:
       "10년 된 코드를 30초에 의미 단위로 분리해 읽음. 코드리뷰 시작점이 0이 아니라 70%.",
     videoSrc: "/videos/V7-A-legacy-c.mp4",
+    watchFor:
+      "사람이 똑같이 하려면 정독에만 30~60분. Claude는 5번의 도구 호출로 끝냄.",
+    scenes: [
+      { at: "0:05", label: "wc -l → 840 라인 — 사람이 한 번에 읽기 무리" },
+      { at: "0:08", label: "Read · Grep 5번 호출 — 함수 13개 / 매크로 312곳 식별" },
+      { at: "0:18", label: "1) 함수 책임 표 9개 — IO / ECC / DMA / probe 4영역" },
+      { at: "0:32", label: "2) 3-way 책임 분리 제안 — io.c / ecc.c / probe.c" },
+      { at: "0:45", label: "3) 매크로 변환 diff — 0x0fff/>>4 → GENMASK + FIELD_GET" },
+      { at: "1:02", label: "5) race condition 식별 — 4bit ECC IRQ-context 위험" },
+      { at: "1:15", label: "검증 명령 + 다음 단계 우선순위 4개" },
+    ],
   },
   {
     id: "C",
@@ -45,6 +62,17 @@ const demos: Demo[] = [
     emphasis:
       "여러 디렉토리에 흩어진 빌드 파일을 동시에·일관되게. 가장 자주 깜빡하는 부분.",
     videoSrc: "/videos/V7-C-build.mp4",
+    watchFor:
+      "Kconfig·Makefile·defconfig 3 파일 동시에. sandbox + am335x 두 보드에서 동시 검증.",
+    scenes: [
+      { at: "0:03", label: "ls 3 파일 — 수정해야 할 파일 목록 확인" },
+      { at: "0:10", label: "Edit 3번 — Kconfig + Makefile + defconfig 동시 수정" },
+      { at: "0:25", label: "git diff --stat — 3 파일 18 라인 추가 (의도와 일치)" },
+      { at: "0:38", label: "Bash: make sandbox_defconfig && make — 빌드 PASS" },
+      { at: "0:52", label: "대체 보드: am335x cross-compile 검증 — warning 0" },
+      { at: "1:05", label: "size delta +4072 byte (V2 ECC table) / dependency 정상" },
+      { at: "1:12", label: "검증 결과 요약 — 4개 게이트 모두 ✓" },
+    ],
   },
   {
     id: "E",
@@ -58,6 +86,16 @@ const demos: Demo[] = [
     emphasis:
       "Mock·픽스처가 귀찮아 미루던 단위테스트가 1분에 만들어지고 host에서 돌아감. 보드 없이 회귀 검증.",
     videoSrc: "/videos/V7-E-unit-test.mp4",
+    watchFor:
+      "사람은 mock 만들기 귀찮아 미루던 일. Claude는 5 케이스 + coverage까지 한 번에.",
+    scenes: [
+      { at: "0:03", label: "grep test/dm/ → (no tests yet) — 시작점 확인" },
+      { at: "0:10", label: "Write 3번 — test 파일 + Mock 컨트롤러 + Kconfig 등록" },
+      { at: "0:30", label: "DM_TEST 5개 작성 — ready / ecc_pack / 4bit_timeout / 1bit / 3bit" },
+      { at: "0:50", label: "Bash: ./test/py/test.py --bd=sandbox -k nand → 5 PASSED" },
+      { at: "1:05", label: "coverage 매트릭스 — pack_ecc 100%, correct_data 47/55" },
+      { at: "1:18", label: "효과: 보드 없이 host 검증 + 경계조건 4종 망라" },
+    ],
   },
   {
     id: "H",
@@ -69,6 +107,17 @@ const demos: Demo[] = [
     result: "레지스터 맵 표 + Mermaid 시퀀스 다이어그램 + 메모리 트레이닝 흐름도",
     emphasis: "데이터시트와 코드 사이의 갭을 5분에 메움. 속도가 아니라 '안 하던 걸 하게 됨'.",
     videoSrc: "/videos/V7-H-docs.mp4",
+    watchFor:
+      "사람은 1~2일 걸려 안 하던 일. Claude는 표 + 다이어그램 + 매트릭스 + 성능표를 동시에.",
+    scenes: [
+      { at: "0:03", label: "find Documentation/ → 0 — 문서 부재 확인" },
+      { at: "0:10", label: "Read · Grep 3번 — 레지스터 정의 + 데이터시트 참조 추출" },
+      { at: "0:25", label: "1) EMIF 레지스터 맵 표 — 오프셋·비트필드·의미" },
+      { at: "0:40", label: "2) NAND read page Mermaid 시퀀스 — CPU·DRV·EMIF·CHIP" },
+      { at: "0:58", label: "3) ECC 모드 Kconfig 매트릭스 — Hamming/BCH 분기" },
+      { at: "1:08", label: "5) probe-time 메모리 트레이닝 흐름도" },
+      { at: "1:18", label: "6) 성능 카운터 — read_page 98µs / bbt_scan 480ms" },
+    ],
   },
 ];
 
@@ -106,7 +155,23 @@ export function EmbeddedDemos({
                   {d.emphasis}
                 </Callout>
               </div>
-              <Mp4Video src={d.videoSrc} loop />
+              <div className="space-y-3">
+                <Mp4Video src={d.videoSrc} loop />
+                <div className="rounded-md bg-bg-soft px-4 py-3 ring-1 ring-white/5 text-xs">
+                  <div className="text-accent uppercase tracking-wider mb-2">
+                    영상에서 보실 것
+                  </div>
+                  <p className="text-ink-soft mb-3 leading-relaxed">{d.watchFor}</p>
+                  <ul className="space-y-1 text-ink-soft">
+                    {d.scenes.map((s) => (
+                      <li key={s.at} className="flex gap-3">
+                        <span className="font-mono text-accent shrink-0 w-12">{s.at}</span>
+                        <span>{s.label}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
           </Card>
         ))}

@@ -75,10 +75,12 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         '@PROMPT '*)
             text="${line#@PROMPT }"
             printf '\n%s>%s %s\n\n' "$C_BOLD" "$C_RESET" "$text"
-            ms_sleep 350
+            ms_sleep 700
             ;;
         '@SLEEP '*)
             ms="${line#@SLEEP }"
+            # 교육용 가독성을 위해 모든 SLEEP 값을 1.6x로 늘림
+            ms=$((ms * 16 / 10))
             ms_sleep "$ms"
             ;;
         '@BULLET '*)
@@ -87,48 +89,48 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             text="${rest#* }"
             col="$(color_for "$color")"
             printf '%s●%s %s\n' "$col" "$C_RESET" "$text"
-            ms_sleep 90
+            ms_sleep 180
             ;;
         '@INDENT '*)
             text="${line#@INDENT }"
             printf '  %s⎿%s  %s\n' "$C_DIM" "$C_RESET" "$text"
-            ms_sleep 60
+            ms_sleep 120
             ;;
         '@THINK '*)
             text="${line#@THINK }"
             printf '%s●%s %s%s%s\n' "$C_CYAN" "$C_RESET" "$C_DIM" "$text" "$C_RESET"
-            ms_sleep 120
+            ms_sleep 240
             ;;
         '@SECTION '*)
             text="${line#@SECTION }"
             printf '\n%s%s%s\n' "$C_BOLD" "$text" "$C_RESET"
             printf '%s%s%s\n' "$C_DIM" "─────────────────────────────────────────────────────────────" "$C_RESET"
-            ms_sleep 200
+            ms_sleep 400
             ;;
         '@FOOTER '*)
             text="${line#@FOOTER }"
             printf '\n%s%s%s\n' "$C_DIM" "$text" "$C_RESET"
-            ms_sleep 100
+            ms_sleep 200
             ;;
         '@DONE')
             printf '\n%s✓%s %sTask complete%s\n' "$C_GREEN" "$C_RESET" "$C_BOLD" "$C_RESET"
-            ms_sleep 200
+            ms_sleep 400
             ;;
         '@RAW '*)
             text="${line#@RAW }"
             printf '%b\n' "$text"
-            ms_sleep 30
+            ms_sleep 60
             ;;
         '@COMMENT '*)
             : # 주석은 무시
             ;;
         '')
             printf '\n'
-            ms_sleep 25
+            ms_sleep 50
             ;;
         *)
             printf '%s\n' "$line"
-            ms_sleep 30
+            ms_sleep 60
             ;;
     esac
 done < "$DATA_FILE"

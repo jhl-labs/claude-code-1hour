@@ -31,4 +31,4 @@ Type@45ms `claude 'CONFIG_NAND_DAVINCI_V2 Kconfig 옵션 추가. 관련 Makefile
 Sleep 500ms
 Enter
 
-Sleep 70s
+Sleep 35s

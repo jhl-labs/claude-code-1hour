@@ -29,4 +29,4 @@ Type@45ms `claude '이 드라이버의 컨트롤러 레지스터 맵을 마크�
 Sleep 500ms
 Enter
 
-Sleep 70s
+Sleep 35s
