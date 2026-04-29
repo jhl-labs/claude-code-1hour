@@ -70,7 +70,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="V5-mcp"
         component={V5Mcp}
-        durationInFrames={60 * 30}
+        durationInFrames={90 * 30}
         fps={30}
         width={1920}
         height={1080}
