@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feature/plan-01-scaffold
   workflow_dispatch:
 
 permissions:
