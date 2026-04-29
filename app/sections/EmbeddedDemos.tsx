@@ -13,6 +13,7 @@ type Demo = {
   id: "A" | "C" | "E" | "H";
   videoId: string;
   title: string;
+  talkMinutes: string;
   setup: string;
   prompt: string;
   result: string;
@@ -30,6 +31,7 @@ const demos: Demo[] = [
     id: "A",
     videoId: "V7-A",
     title: "레거시 C 분석·리팩토링",
+    talkMinutes: "6분",
     setup:
       "U-Boot drivers/mtd/nand/raw/ 의 NAND 컨트롤러 드라이버 (600~800라인, 레거시).",
     prompt:
@@ -56,6 +58,7 @@ const demos: Demo[] = [
     id: "C",
     videoId: "V7-C",
     title: "빌드 시스템 다루기",
+    talkMinutes: "6분",
     setup: "새 IP rev(가칭 V2) 지원을 위해 Kconfig 옵션·Makefile·defconfig 동시 수정.",
     prompt:
       "CONFIG_NAND_DENALI_V2 Kconfig 옵션 추가. 관련 Makefile, defconfig까지 일관되게. sandbox 빌드가 깨지지 않게.",
@@ -81,6 +84,7 @@ const demos: Demo[] = [
     id: "E",
     videoId: "V7-E",
     title: "단위 테스트 자동 생성",
+    talkMinutes: "6분",
     setup: "NAND 컨트롤러 핵심 함수에 단위테스트가 0개임을 강조.",
     prompt:
       "이 함수의 unit test를 sandbox에서 돌릴 수 있게 작성. 정상 + 경계 조건(타임아웃·잘못된 명령·ECC 비트 1~3개 에러). test/dm/ 패턴 따라서.",
@@ -105,6 +109,7 @@ const demos: Demo[] = [
     id: "H",
     videoId: "V7-H",
     title: "문서화 자동 생성",
+    talkMinutes: "6분",
     setup: "데모 A와 같은 드라이버. 문서가 0줄임 강조.",
     prompt:
       "이 드라이버의 컨트롤러 레지스터 맵을 마크다운 표로(오프셋·비트필드·의미). 'NAND read page' 명령 흐름을 Mermaid 시퀀스 다이어그램으로(CPU/컨트롤러/NAND chip).",
@@ -136,12 +141,19 @@ export function EmbeddedDemos({
       <header className="mb-10">
         <div className="text-xs uppercase tracking-wider text-accent">§3</div>
         <h2 className="mt-1 text-4xl font-semibold">{meta.longTitle}</h2>
-        <p className="mt-2 text-ink-muted">4종 데모 · 각 ~7분 · U-Boot 메모리 서브시스템</p>
+        <p className="mt-2 text-ink-muted">24분. 4종 데모 · 각 6분 · U-Boot 메모리 서브시스템</p>
       </header>
 
-      <div className="grid grid-cols-1 gap-6">
+      <Callout tone="info" title="현장 운영 메모">
+        <p className="leading-relaxed">
+          각 데모는 <strong>90초 영상 + 4분 해설 + 30초 전환</strong> 기준입니다. 시간이 밀리면 A, C, E는
+          반드시 시연하고 H는 결과 화면만 요약해도 전체 메시지는 유지됩니다.
+        </p>
+      </Callout>
+
+      <div className="mt-6 grid grid-cols-1 gap-6">
         {demos.map((d) => (
-          <Card key={d.id} eyebrow={`데모 ${d.id} · ${d.videoId}`} title={d.title}>
+          <Card key={d.id} eyebrow={`데모 ${d.id} · ${d.videoId} · ${d.talkMinutes}`} title={d.title}>
             <div className="space-y-6">
               {/* 상단: 영상 (꽉 채움) */}
               <Mp4Video src={d.videoSrc} poster={d.poster} loop />
@@ -206,7 +218,10 @@ export function EmbeddedDemos({
             <tr><td className="py-2">H 문서화</td><td>1~2일 (안 함이 다반사)</td><td>10분</td><td className="text-accent">0 → 1</td></tr>
           </tbody>
         </table>
-        <p className="mt-3 text-xs text-ink-muted">* 데모 실측 후 발표 직전 수치 보정.</p>
+        <p className="mt-3 text-xs text-ink-muted">
+          * 이 표는 “대체로 얼마나 빨라지는가”를 보여주는 용도입니다. 메시지는 절감률보다도
+          <strong> 검토 시작점이 올라간다</strong>는 데 있습니다.
+        </p>
       </div>
     </ScrollSection>
   );

@@ -25,13 +25,8 @@ const faqs: FAQ[] = [
   },
   {
     tag: "기술",
-    q: "메모리 제약·실시간성 같은 비기능 요구는 무시하지 않나요?",
-    a: "CLAUDE.md 에 제약을 명시하면 Claude 가 이를 고려. “스택 사용 < 256B”, “IRQ 컨텍스트 sleep 금지” 같은 한 줄이 Claude 의 출력에 그대로 반영됨. 데모 H 의 레지스터 맵 자동 정리도 같은 메커니즘.",
-  },
-  {
-    tag: "기술",
-    q: "MISRA · CERT-C 같은 코딩 표준은요?",
-    a: "Skill 또는 CLAUDE.md 에 적용 규칙·금지 항목·예외 케이스를 명시. PR 단위 자동 점검을 Hook 으로 묶으면 사람이 일일이 보지 않아도 표준 위반이 머지 전에 잡힘.",
+    q: "메모리 제약·실시간성·코딩 표준도 반영합니까?",
+    a: "가능합니다. CLAUDE.md 나 Skill 에 “스택 사용 < 256B”, “IRQ 컨텍스트 sleep 금지”, “MISRA 예외 규칙” 같은 제약을 적어두면 출력이 그 범위 안으로 좁혀집니다.",
   },
   {
     tag: "기술",
@@ -40,13 +35,8 @@ const faqs: FAQ[] = [
   },
   {
     tag: "조직",
-    q: "팀에 Claude Code 잘 쓰는 사람·못 쓰는 사람 격차가 벌어지지 않을까요?",
-    a: "초반엔 벌어집니다. 그래서 CLAUDE.md · Skill · 사내 슬랙 채널이 필요. 잘 쓰는 사람의 노하우를 한 사람에게 가두지 말고 코드(Skill)로 굳혀 모두가 호출.",
-  },
-  {
-    tag: "조직",
-    q: "기존 legacy 코드의 책임은? AI 가 고친 버그가 났을 때.",
-    a: "책임은 항상 머지한 사람. PR 리뷰 프로세스는 그대로 유지. AI 가 만든 패치도 사람이 검토하고 머지. 단, 검토에 들이는 시간이 줄어드니 더 많은 PR 을 더 깊이 검토할 수 있음.",
+    q: "팀 안에서 잘 쓰는 사람과 못 쓰는 사람 격차가 커지지 않을까요?",
+    a: "초반엔 벌어집니다. 그래서 개인 요령으로 두지 말고 CLAUDE.md, 공용 프롬프트, Skill 로 굳혀야 합니다. 그래야 격차가 개인 숙련도가 아니라 팀 자산으로 바뀝니다.",
   },
   {
     tag: "도입",
@@ -65,7 +55,7 @@ export function QA({ onEnter }: { onEnter?: (id: typeof meta.id) => void }) {
     <ScrollSection section={meta} onEnter={onEnter}>
       <header className="mb-10">
         <h2 className="text-4xl font-semibold">{meta.longTitle}</h2>
-        <p className="mt-2 text-ink-muted">자주 묻는 질문 · 라이브 5 분. 슬라이드는 사후 자료로.</p>
+        <p className="mt-2 text-ink-muted">5분. 라이브에서는 6문답만 다루고, 추가 질문은 이 카드들을 기준으로 확장합니다.</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

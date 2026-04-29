@@ -6,12 +6,12 @@ import { sections } from "@/app/lib/sections";
 const meta = sections.find((s) => s.id === "hero")!;
 
 const agenda: { mins: string; title: string; note: string }[] = [
-  { mins: "0~5",   title: "§1 Claude Code 가 뭔가",   note: "한 줄 정의 · 진화 타임라인" },
-  { mins: "5~18",  title: "§2 핵심 5 가지",            note: "CLI · CLAUDE.md · 도구 · MCP · Skills/Subagents/Hooks" },
-  { mins: "18~46", title: "§3 임베디드 라이브 데모 4 종", note: "U-Boot NAND 컨트롤러로 직접" },
-  { mins: "46~52", title: "§4 그래서 우리가 얻는 것",   note: "Before/After · 시간 절감 · 워크플로우" },
-  { mins: "52~57", title: "§5 시작하기",                note: "30분 가이드 · CLAUDE.md 템플릿" },
-  { mins: "57~60", title: "Q & A",                       note: "임베디드 특화 8 문답" },
+  { mins: "0~6",   title: "§1 Claude Code 가 뭔가",      note: "한 줄 정의 · 왜 지금이 변곡점인가" },
+  { mins: "6~18",  title: "§2 핵심 5 가지",               note: "오늘 바로 쓸 3개 + 나중에 붙일 2개" },
+  { mins: "18~42", title: "§3 임베디드 라이브 데모 4 종",  note: "U-Boot NAND 컨트롤러 · 각 6분" },
+  { mins: "42~48", title: "§4 그래서 우리가 얻는 것",     note: "처리 속도보다 검토 품질과 밀도" },
+  { mins: "48~55", title: "§5 시작하기",                   note: "오늘 30분 · 이번 주 7일" },
+  { mins: "55~60", title: "Q & A",                          note: "라이브 우선 6문답" },
 ];
 
 export function Hero({ onEnter }: { onEnter?: (id: typeof meta.id) => void }) {
@@ -54,10 +54,10 @@ export function Hero({ onEnter }: { onEnter?: (id: typeof meta.id) => void }) {
       </div>
 
       {/* 60분 어젠다 */}
-      <div className="mt-16">
+          <div className="mt-16">
         <div className="mb-4 flex items-baseline justify-between">
           <h2 className="text-xl font-semibold">오늘 60분 흐름</h2>
-          <span className="text-xs text-ink-muted">데모 28분 · 슬라이드 32분</span>
+          <span className="text-xs text-ink-muted">데모 24분 · 설명 31분 · Q&A 5분</span>
         </div>
         <ol className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {agenda.map((row) => (
@@ -89,7 +89,7 @@ export function Hero({ onEnter }: { onEnter?: (id: typeof meta.id) => void }) {
         </div>
         <div className="rounded-md border-l-2 border-accent/50 bg-bg-soft/50 px-4 py-3">
           <div className="text-xs uppercase tracking-wider text-ink-muted mb-1">결과물</div>
-          내일 아침 30분이면 첫 명령. 일주일이면 코드리뷰·단위테스트 워크플로우에 투입.
+          오늘 30분이면 첫 명령. 이번 주 안에 코드리뷰·단위테스트 워크플로우에 붙일 수 있음.
         </div>
       </div>
     </ScrollSection>

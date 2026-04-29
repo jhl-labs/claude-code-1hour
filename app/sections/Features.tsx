@@ -13,6 +13,7 @@ const meta = sections.find((s) => s.id === "features")!;
 type FeatureItem = {
   videoId: string;
   title: string;
+  stage: string;
   body: string[];
   embedded: string;
   example: { label: string; text: string };
@@ -24,6 +25,7 @@ const features: FeatureItem[] = [
   {
     videoId: "V2",
     title: "CLI + 에이전틱 루프",
+    stage: "오늘 바로",
     body: [
       "사람이 한 번 시키면, Claude 가 사고 → 도구 호출 → 관찰 → 다음 행동을 스스로 반복합니다.",
       "보드 디버깅에서 “레지스터 한 번 보고, 로그 한 번 보고, 가설 세우고, 다시 시도” 하는 그 루프와 똑같음. 차이는 코드 위에서 돌아간다는 것 뿐.",
@@ -40,6 +42,7 @@ const features: FeatureItem[] = [
   {
     videoId: "V3",
     title: "CLAUDE.md = 프로젝트의 기억",
+    stage: "오늘 바로",
     body: [
       "팀의 빌드 명령·코딩 규칙·하드웨어 제약을 적어두면 Claude 가 매 세션마다 그걸 알고 시작합니다.",
       "신규 입사자에게 한 번 알려주듯이 한 번만. 매 PR 마다 “BCH-8 인지 확인했나?”를 다시 말할 필요 없음.",
@@ -56,6 +59,7 @@ const features: FeatureItem[] = [
   {
     videoId: "V4",
     title: "도구 사용 (Read · Edit · Bash · Grep)",
+    stage: "오늘 바로",
     body: [
       "말만 하는 게 아니라 실제로 파일을 읽고, 고치고, 빌드를 돌립니다. ChatGPT 웹 채팅과의 결정적 차이.",
       "Read = 파일 정독 / Grep = 심볼·문자열 검색 / Edit = 정확한 변경 / Bash = 빌드·테스트·git. 이 4 가지 조합으로 거의 모든 임베디드 작업이 됨.",
@@ -72,6 +76,7 @@ const features: FeatureItem[] = [
   {
     videoId: "V5",
     title: "MCP — 외부 시스템과의 다리",
+    stage: "2주차 이후",
     body: [
       "GitHub · DB · Jira · 내부 시스템에 Claude 가 직접 접근. Model Context Protocol 이 표준 인터페이스.",
       "사내에 이미 있는 도구를 Claude 와 잇는 표준 방법. 매번 별도 통합 코드를 짤 필요가 없습니다.",
@@ -88,6 +93,7 @@ const features: FeatureItem[] = [
   {
     videoId: "V6",
     title: "Skills · Subagents · Hooks",
+    stage: "팀 적용 단계",
     body: [
       "Skill = 자주 하는 절차의 호출 가능한 형태(릴리즈 노트 작성·MISRA 점검).",
       "Subagent = 큰 작업의 위임. 메인 컨텍스트를 더럽히지 않고 “이 디렉토리만 정리” 같은 분담.",
@@ -110,7 +116,7 @@ export function Features({ onEnter }: { onEnter?: (id: typeof meta.id) => void }
       <header className="mb-10">
         <div className="text-xs uppercase tracking-wider text-accent">§2</div>
         <h2 className="mt-1 text-4xl font-semibold">{meta.longTitle}</h2>
-        <p className="mt-2 text-ink-muted">5 개 영상 + 5 개 슬라이드, 약 13 분. 다음 데모를 이해할 사전 지식.</p>
+        <p className="mt-2 text-ink-muted">12분. 오늘 바로 쓸 3개를 먼저, 나머지 2개는 확장 기능으로 본다.</p>
       </header>
 
       {/* 한 줄 요약 띠 */}
@@ -122,9 +128,21 @@ export function Features({ onEnter }: { onEnter?: (id: typeof meta.id) => void }
         팀 노하우를 코드처럼 굳힙니다.
       </div>
 
+      <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+        <div className="rounded-md border-l-2 border-accent/50 bg-bg-soft/60 px-4 py-3">
+          <div className="text-xs uppercase tracking-wider text-ink-muted mb-1">오늘 바로 가져갈 것</div>
+          CLI 루프, <code className="font-mono text-xs">CLAUDE.md</code>, 도구 사용. 여기까지 이해하면
+          오늘 데모 4종은 거의 다 설명됩니다.
+        </div>
+        <div className="rounded-md border-l-2 border-white/10 bg-bg-soft/60 px-4 py-3">
+          <div className="text-xs uppercase tracking-wider text-ink-muted mb-1">나중에 붙일 것</div>
+          MCP 와 Skills/Subagents/Hooks 는 팀 적용 단계의 증폭기입니다. 오늘은 “이런 확장축이 있다”까지만.
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {features.map((f) => (
-          <Card key={f.videoId} eyebrow={f.videoId} title={f.title}>
+          <Card key={f.videoId} eyebrow={`${f.stage} · ${f.videoId}`} title={f.title}>
             <div className="grid grid-cols-1 sm:grid-cols-[1fr,1fr] gap-5 items-start">
               <div className="space-y-3 text-sm">
                 {f.body.map((p, i) => (
@@ -163,11 +181,11 @@ export function Features({ onEnter }: { onEnter?: (id: typeof meta.id) => void }
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              <tr><td className="px-4 py-2.5">1일차</td><td>CLI 루프 + 도구</td><td>설치 직후</td><td>질문하고 결과 검토</td></tr>
-              <tr><td className="px-4 py-2.5">3일차</td><td>CLAUDE.md</td><td>같은 실수 2번 반복될 때</td><td>5분 작성·갱신</td></tr>
-              <tr><td className="px-4 py-2.5">2주차</td><td>Skills</td><td>같은 절차 3번 이상 반복</td><td>Skill 로 굳히기</td></tr>
-              <tr><td className="px-4 py-2.5">1개월차</td><td>MCP</td><td>외부 시스템(Jira·DB) 연계</td><td>MCP 서버 1개 등록</td></tr>
-              <tr><td className="px-4 py-2.5">2개월차</td><td>Subagents · Hooks</td><td>팀 워크플로우 표준화</td><td>금기·자동화 규칙 정의</td></tr>
+              <tr><td className="px-4 py-2.5">오늘</td><td>CLI 루프 + 도구</td><td>설치 직후</td><td>질문하고 빌드/테스트 결과 검토</td></tr>
+              <tr><td className="px-4 py-2.5">이번 주</td><td>CLAUDE.md</td><td>같은 실수 2번 반복될 때</td><td>5~10줄 작성·갱신</td></tr>
+              <tr><td className="px-4 py-2.5">2주차</td><td>Skills</td><td>같은 절차 3번 이상 반복</td><td>팀 표준 절차를 Skill 로 고정</td></tr>
+              <tr><td className="px-4 py-2.5">1개월차</td><td>MCP</td><td>외부 시스템(Jira·GitHub·빌드팜) 연계</td><td>MCP 서버 1개 붙여 보기</td></tr>
+              <tr><td className="px-4 py-2.5">정착 단계</td><td>Subagents · Hooks</td><td>팀 워크플로우 표준화</td><td>자동 게이트와 금기 정의</td></tr>
             </tbody>
           </table>
         </div>

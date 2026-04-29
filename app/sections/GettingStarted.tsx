@@ -53,7 +53,7 @@ export function GettingStarted({ onEnter }: { onEnter?: (id: typeof meta.id) => 
         <div className="text-xs uppercase tracking-wider text-accent">§5</div>
         <h2 className="mt-1 text-4xl font-semibold">{meta.longTitle}</h2>
         <p className="mt-2 text-ink-muted">
-          오늘 미팅 후 30분이면 첫 명령까지. 하루면 일하는 흐름 안에 들어옴.
+          7분. 라이브에서는 첫 30분만 설명하고, 아래 체크리스트는 사후 참고 자료로 남깁니다.
         </p>
       </header>
 
@@ -102,9 +102,16 @@ export function GettingStarted({ onEnter }: { onEnter?: (id: typeof meta.id) => 
         </div>
       </div>
 
+      <div className="mt-10">
+        <Callout tone="info" title="라이브에서 실제로 말할 3가지만">
+          설치, <code className="font-mono text-xs">CLAUDE.md</code>, 첫 작업. 이 세 가지만 끝나면
+          청중은 내일 아침 바로 자기 저장소에서 첫 실험을 시작할 수 있습니다.
+        </Callout>
+      </div>
+
       {/* 첫 30분 단계 */}
       <div className="mt-12">
-        <h3 className="mb-4 text-xl font-semibold">미팅 직후 30분 — 단계별</h3>
+        <h3 className="mb-4 text-xl font-semibold">오늘 끝나고 바로 할 3단계</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card eyebrow="0~5 분" title="설치 + 로그인">
             <p>
@@ -115,7 +122,7 @@ export function GettingStarted({ onEnter }: { onEnter?: (id: typeof meta.id) => 
           <Card eyebrow="5~15 분" title="CLAUDE.md 5줄 + 1 작업">
             <p>
               빌드 명령·하드웨어 제약 5줄만 적고, 가장 무서운 파일을 코드리뷰 시키기.
-              결과를 사람이 읽고 “여긴 잘못됐어”라고 바로잡으면서 컨텍스트가 쌓임.
+              여기서 “여긴 틀렸어”라고 바로잡는 과정이 컨텍스트를 쌓는 첫 단계입니다.
             </p>
           </Card>
           <Card eyebrow="15~30 분" title="단위테스트 1개 + 빌드">
@@ -123,6 +130,21 @@ export function GettingStarted({ onEnter }: { onEnter?: (id: typeof meta.id) => 
               sandbox 빌드가 도는 폴더에서 <code className="font-mono text-xs">test/dm/</code> 패턴으로
               테스트 1개 생성 시키기. <code className="font-mono text-xs">./test/py/test.py</code> 까지 PASS 보면 끝.
             </p>
+          </Card>
+        </div>
+      </div>
+
+      <div className="mt-12">
+        <h3 className="mb-4 text-xl font-semibold">이번 주 7일 플랜</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card eyebrow="Day 1" title="내 저장소에서 첫 성공">
+            가장 무서운 파일 1개 리뷰, 빌드 1회, 테스트 1회. 성공 경험을 먼저 만듭니다.
+          </Card>
+          <Card eyebrow="Day 3" title="반복되는 지식 적기">
+            팀이 자주 하는 주의사항 5~10줄을 <code className="font-mono text-xs">CLAUDE.md</code> 에 정리합니다.
+          </Card>
+          <Card eyebrow="Day 7" title="팀 루프로 연결">
+            리뷰 템플릿, 자주 쓰는 프롬프트, 테스트 명령 1개를 팀 공용 절차로 굳힙니다.
           </Card>
         </div>
       </div>
@@ -144,8 +166,8 @@ export function GettingStarted({ onEnter }: { onEnter?: (id: typeof meta.id) => 
             <li>· <strong>응답이 엉뚱함</strong> → CLAUDE.md 부재 or 오래된 내용. 최신화 5분.</li>
             <li>· <strong>Bash 권한 거부</strong> → <code className="font-mono text-xs">/permissions</code> 에서 정책 조정.</li>
             <li>· <strong>환각 빌드 명령</strong> → CLAUDE.md 에 “빌드: …” 한 줄 박기.</li>
-            <li>· <strong>토큰 한도</strong> → <code className="font-mono text-xs">/clear</code> 로 컨텍스트 정리, subagent 분할.</li>
-            <li>· <strong>대용량 로그</strong> → 파이프 대신 파일로 저장 후 Read.</li>
+            <li>· <strong>토큰 한도</strong> → <code className="font-mono text-xs">/clear</code> 로 컨텍스트 정리, 큰 작업은 나눠서.</li>
+            <li>· <strong>대용량 로그</strong> → 파이프 대신 파일로 저장 후 필요한 구간만 읽히기.</li>
           </ul>
         </Card>
         <Card eyebrow="조직 차원" title="보안 / 데이터">
@@ -176,7 +198,7 @@ export function GettingStarted({ onEnter }: { onEnter?: (id: typeof meta.id) => 
             <div>
               <div className="font-semibold mb-1 text-ink">vibe-project-lesson</div>
               <p>
-                자가학습 28모듈. CLAUDE.md → MCP → Subagent 순으로. 주 1모듈 페이스 권장.
+                자가학습 28모듈. CLAUDE.md → MCP → Subagent 순으로. 한 번에 몰아보지 말고 주 1모듈 페이스 권장.
               </p>
             </div>
           </div>
