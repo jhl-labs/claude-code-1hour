@@ -7,8 +7,14 @@
 ## 빌드/실행
 - `pnpm install`
 - `pnpm dev` — 로컬 개발 (라이브 강의도 이걸로)
-- `pnpm build` — 정적 빌드 백업
+- `pnpm build` — 정적 빌드 (`out/` 생성, GitHub Pages 배포 산출물)
 - `pnpm test` — Vitest
+
+## 배포
+- GitHub Pages: `https://jhl-labs.github.io/claude-code-1hour/`
+- `main` 브랜치 푸시 시 `.github/workflows/deploy-pages.yml` 가 자동 배포.
+- `next.config.ts` 의 `output: "export"` + `basePath` 사용. CI 에서 `NEXT_PUBLIC_BASE_PATH=/claude-code-1hour` 주입.
+- `<video>` 등 raw 태그 자산 경로는 `app/lib/assetPath.ts` 의 `assetPath()` 로 prefix.
 
 ## 영상
 - 모션 영상은 `remotion/compositions/V*.tsx`. `pnpm remotion:studio`로 미리보기.

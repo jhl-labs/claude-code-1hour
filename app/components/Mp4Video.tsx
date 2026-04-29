@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { useInView } from "@/app/lib/useInView";
+import { assetPath } from "@/app/lib/assetPath";
 
 type Props = {
   src: string;
@@ -43,13 +44,13 @@ export function Mp4Video({
       <video
         ref={videoRef}
         // 캐시 버스트 — 영상 갱신 시 브라우저가 옛 mp4를 그대로 쓰지 않도록.
-        src={`${src}?v=20260429-1515`}
+        src={`${assetPath(src)}?v=20260429-1515`}
         className="w-full h-full object-contain bg-black"
         controls={controls}
         loop={loop}
         muted={autoPlay}
         playsInline
-        poster={poster}
+        poster={poster ? assetPath(poster) : undefined}
         preload="metadata"
       />
     </div>
