@@ -1,7 +1,7 @@
-# V7-C : 빌드 시스템 다루기 (vhs 시나리오, ~70초)
+# V7-C : 빌드 시스템 다루기 (vhs 시나리오, ~75초)
 Output ../recordings/V7-C-build.mp4
 
-Set FontSize 22
+Set FontSize 20
 Set Width 1920
 Set Height 1080
 Set Theme "Catppuccin Mocha"
@@ -15,7 +15,7 @@ Type `touch drivers/mtd/nand/raw/Kconfig drivers/mtd/nand/raw/Makefile configs/s
 Enter
 Type `export PS1='nand-dev@u-boot:~/u-boot$ '`
 Enter
-Type `alias claude='_c(){ sleep 2; cat .claude-resp/C.txt; }; _c'`
+Type `alias claude='./fake-claude.sh ./.claude-resp/C.txt'`
 Enter
 Type `clear`
 Enter
@@ -31,4 +31,4 @@ Type@45ms `claude 'CONFIG_NAND_DAVINCI_V2 Kconfig 옵션 추가. 관련 Makefile
 Sleep 500ms
 Enter
 
-Sleep 50s
+Sleep 70s

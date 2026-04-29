@@ -1,7 +1,7 @@
-# V7-E : 단위 테스트 자동 생성 (vhs 시나리오, ~70초)
+# V7-E : 단위 테스트 자동 생성 (vhs 시나리오, ~75초)
 Output ../recordings/V7-E-unit-test.mp4
 
-Set FontSize 22
+Set FontSize 20
 Set Width 1920
 Set Height 1080
 Set Theme "Catppuccin Mocha"
@@ -13,7 +13,7 @@ Type `cd /tmp/lecture-demo`
 Enter
 Type `export PS1='nand-dev@u-boot:~/u-boot$ '`
 Enter
-Type `alias claude='_c(){ sleep 2; cat .claude-resp/E.txt; }; _c'`
+Type `alias claude='./fake-claude.sh ./.claude-resp/E.txt'`
 Enter
 Type `clear`
 Enter
@@ -29,4 +29,4 @@ Type@45ms `claude '이 함수의 unit test를 sandbox에서 돌릴 수 있게 �
 Sleep 500ms
 Enter
 
-Sleep 55s
+Sleep 70s
