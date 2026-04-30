@@ -3,6 +3,7 @@ import { Mp4Video } from "@/app/components/Mp4Video";
 import { Card } from "@/app/components/Card";
 import { Callout } from "@/app/components/Callout";
 import { CodeBlock } from "@/app/components/CodeBlock";
+import { MarkdownTable } from "@/app/components/MarkdownTable";
 import { Mermaid } from "@/app/components/Mermaid";
 import { sections } from "@/app/lib/sections";
 
@@ -447,7 +448,7 @@ function DemoResults({ demoId }: { demoId: Demo["id"] }) {
             label="1) 함수 책임 마크다운 표"
             description="9 개 함수 — IO / ECC / DMA / probe 4 영역으로 분류"
           >
-            <CodeBlock lang="markdown">{demoAResponsibilityTable}</CodeBlock>
+            <MarkdownTable source={demoAResponsibilityTable} />
           </ResultBlock>
           <ResultBlock
             label="2) 3-way 책임 분리 제안"
@@ -538,7 +539,7 @@ function DemoResults({ demoId }: { demoId: Demo["id"] }) {
             label="1) EMIF 레지스터 맵 표"
             description="오프셋·비트필드·의미 — 데이터시트 vs 코드 갭 메우는 1차 자료"
           >
-            <CodeBlock lang="markdown">{demoHRegisterMap}</CodeBlock>
+            <MarkdownTable source={demoHRegisterMap} />
           </ResultBlock>
           <ResultBlock
             label="2) NAND read page Mermaid 시퀀스"
