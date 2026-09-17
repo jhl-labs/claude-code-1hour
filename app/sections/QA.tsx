@@ -5,9 +5,9 @@ import { sections } from "@/app/lib/sections";
 
 const meta = sections.find((s) => s.id === "qa")!;
 
-type FAQ = { q: string; a: string; tag?: string };
+export type FAQ = { q: string; a: string; tag?: string };
 
-const faqs: FAQ[] = [
+export const faqs: FAQ[] = [
   {
     tag: "비교",
     q: "Copilot · Cursor 와 뭐가 다릅니까?",
@@ -50,8 +50,8 @@ const faqs: FAQ[] = [
   },
   {
     tag: "활용",
-    q: "잘 쓰는 사람과 못 쓰는 사람 격차가 커지지 않을까요?",
-    a: "초반엔 벌어집니다. 잘 쓰는 사람의 요령은 대부분 “좋은 CLAUDE.md · 좋은 프롬프트 · 자주 쓰는 Skill”. 그래서 개인 노트로 두지 말고 공용 자산으로 굳혀야 합니다 — 격차가 개인 숙련도가 아니라 팀 자산이 됩니다.",
+    q: "Workflow로 여러 Subagent를 동시에 돌리면 뭐가 달라지나요?",
+    a: "지금까지는 한 Subagent에게 한 디렉토리를 맡기는 정도였다면, Workflow는 리드 에이전트가 작업을 여러 단계·여러 파일로 쪼개 병렬 Subagent에 동시에 위임하고 결과만 취합합니다. 예를 들어 오늘 본 데모 A(분석)·H(문서화)를 같은 드라이버에 대해 동시에 돌려 검토 자료를 한 번에 받는 식입니다. 단, 서브에이전트 수가 늘수록 검토 부담도 커지므로 처음엔 2~3개로 시작하는 걸 권장합니다.",
   },
   {
     tag: "도입",
