@@ -5,7 +5,7 @@ import { FadeSlide } from "../shared/FadeSlide";
 
 type Milestone = { year: string; title: string; sub: string };
 
-const milestones: Milestone[] = [
+export const milestones: Milestone[] = [
   { year: "2021", title: "Anthropic 창립", sub: "안전한 AI 연구" },
   { year: "2022~2023", title: "Claude 1 / 2", sub: "대화형 LLM 라인업 시작" },
   {
@@ -16,9 +16,19 @@ const milestones: Milestone[] = [
   { year: "2025-02", title: "Claude Code 베타", sub: "터미널 코드 동료" },
   { year: "2025 GA", title: "정식 출시 + Plugins/Skills", sub: "생태계 확장" },
   {
-    year: "2026 현재",
+    year: "2026",
     title: "Subagent · Hook · MCP · IDE",
     sub: "어디서든 같은 에이전틱 루프",
+  },
+  {
+    year: "2026",
+    title: "Claude 5 계열 (Opus 5 · Sonnet 5 · Fable 5.1)",
+    sub: "장시간 에이전트 작업 품질 도약",
+  },
+  {
+    year: "2026 현재",
+    title: "Workflow 오케스트레이션",
+    sub: "여러 서브에이전트를 동시에 조율",
   },
 ];
 
