@@ -148,6 +148,7 @@ const features: FeatureItem[] = [
     body: [
       "GitHub · DB · Jira · 내부 시스템에 Claude 가 직접 접근. Model Context Protocol 이 표준 인터페이스.",
       "사내에 이미 있는 도구를 Claude 와 잇는 표준 방법. 매번 별도 통합 코드를 짤 필요가 없습니다.",
+      "서드파티가 만든 MCP 서버·Skill 묶음을 Plugins 마켓플레이스에서 그대로 설치할 수도 있습니다.",
     ],
     embedded:
       "JTAG 디버거·로직 애널라이저·내부 트레이스 서버를 MCP 로 노출하면, Claude 가 측정값을 직접 읽고 다음 시나리오를 결정. 사람이 콘솔에 GDB 명령 치는 시간을 그만큼 절약.",
@@ -169,6 +170,7 @@ const features: FeatureItem[] = [
     body: [
       "Skill = 자주 하는 절차의 호출 가능한 형태(릴리즈 노트 작성·MISRA 점검).",
       "Subagent = 큰 작업의 위임. 메인 컨텍스트를 더럽히지 않고 “이 디렉토리만 정리” 같은 분담.",
+      "여러 Subagent를 한 번에 계획·팬아웃하는 Workflow로 묶으면, 데모 A/C/E/H 같은 작업을 병렬로 동시에 돌릴 수도 있습니다.",
       "Hook = 자동 트리거. 커밋 전 단위테스트, 빌드 후 정적 분석, 위험 명령 차단까지.",
     ],
     embedded:
@@ -263,7 +265,7 @@ export function Features({ onEnter }: { onEnter?: (id: typeof meta.id) => void }
               <tr><td className="px-4 py-2.5 font-mono text-xs text-accent">Day 3</td><td>CLAUDE.md</td><td>같은 실수 2번 반복될 때</td><td>5~10줄 작성·갱신</td></tr>
               <tr><td className="px-4 py-2.5 font-mono text-xs text-accent">Week 2</td><td>Skills</td><td>같은 절차 3번 이상 반복</td><td>팀 표준 절차를 Skill 로 고정</td></tr>
               <tr><td className="px-4 py-2.5 font-mono text-xs text-accent">Month 1</td><td>MCP</td><td>외부 시스템(Jira·GitHub·빌드팜) 연계</td><td>MCP 서버 1개 붙여 보기</td></tr>
-              <tr><td className="px-4 py-2.5 font-mono text-xs text-accent">Month 2</td><td>Subagents · Hooks</td><td>팀 워크플로우 표준화</td><td>자동 게이트와 금기 정의</td></tr>
+              <tr><td className="px-4 py-2.5 font-mono text-xs text-accent">Month 2</td><td>Subagents · Hooks</td><td>팀 워크플로우 표준화</td><td>자동 게이트·금기 정의 + Workflow로 반복 작업 팬아웃</td></tr>
             </tbody>
           </table>
         </div>
