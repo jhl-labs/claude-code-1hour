@@ -27,3 +27,7 @@ hero-*.png
 section-*.png
 final-*.png
 remotion-*.png
+
+# Local frame audits (regenerate with scripts/audit)
+.audit/
+__pycache__/

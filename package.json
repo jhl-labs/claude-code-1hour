@@ -11,8 +11,8 @@
     "test:watch": "vitest",
     "typecheck:remotion": "tsc -p tsconfig.remotion.json",
     "remotion:studio": "remotion studio",
-    "demos:install-tools": "bash demos/scripts/install-tools.sh",
-    "demos:clone-uboot": "bash demos/scripts/clone-uboot.sh"
+    "demos:clone-uboot": "bash demos/scripts/clone-uboot.sh",
+    "demos:render": "node scripts/videos/render.cjs"
   },
   "packageManager": "pnpm@9.0.0",
   "dependencies": {

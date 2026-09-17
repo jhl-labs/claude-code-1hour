@@ -1,90 +1,95 @@
 import { ScrollSection } from "@/app/components/ScrollSection";
+import { SectionIntro, DocLink } from "@/app/components/SectionIntro";
 import { Card } from "@/app/components/Card";
-import { Callout } from "@/app/components/Callout";
 import { sections } from "@/app/lib/sections";
-
-const meta = sections.find((s) => s.id === "qa")!;
-
+const meta = sections[6];
 export type FAQ = { q: string; a: string; tag?: string };
-
 export const faqs: FAQ[] = [
   {
     tag: "비교",
-    q: "Copilot · Cursor 와 뭐가 다릅니까?",
-    a: "Copilot/Cursor 는 IDE 안의 자동완성·채팅이 중심. Claude Code 는 (1) 터미널에서 자율 루프로 일하고, (2) Read/Edit/Bash/Grep 4종 도구로 빌드·테스트·git 까지 직접 실행하고, (3) CLAUDE.md 로 팀의 규칙을 영구 기억합니다. “옆에서 코드 짜주는 도구” vs “위임할 수 있는 동료”의 차이.",
+    q: "Copilot·Cursor와 무엇을 비교해야 하나요?",
+    a: "두 제품도 에이전트 기능을 제공합니다. 자동완성과 자율 실행이라는 단순 구분보다, 실행 환경·도구 연결·권한·조직 정책·비용·실제 과제의 검토 결과를 비교하세요.",
   },
   {
     tag: "기술",
-    q: "C 임베디드 코드를 정말 잘 이해합니까?",
-    a: "오늘 보신 U-Boot 데모가 답입니다. C/C++ · Kconfig · Makefile · linker script · 디바이스 트리 · RTOS 코드 모두 강함. 매크로·비트필드처럼 전통적 정적분석이 약한 영역에서도 의미적으로 추적합니다.",
-  },
-  {
-    tag: "기술",
-    q: "메모리 제약·실시간성·코딩 표준도 반영합니까?",
-    a: "가능합니다. CLAUDE.md 나 Skill 에 “스택 사용 < 256B”, “IRQ 컨텍스트 sleep 금지”, “MISRA 예외 규칙” 같은 제약을 적어두면 출력이 그 범위 안으로 좁혀집니다. 제약을 안 적으면 일반적인 답이 옵니다 — 모든 건 컨텍스트에 달림.",
-  },
-  {
-    tag: "특성",
-    q: "환각(hallucination) 으로 잘못된 레지스터 사양을 만들지 않나요?",
-    a: "위험은 있습니다. 그래서 두 단계: (1) CLAUDE.md 에 “데이터시트는 docs/ds/*.pdf 만 신뢰” 같은 출처 한정. (2) 변경 후 sandbox/DM 테스트로 즉시 회귀. 환각이 빌드를 깨면 Claude 가 스스로 알아채고 다시 시도합니다 — 자율 루프의 자가 교정.",
-  },
-  {
-    tag: "특성",
-    q: "같은 작업을 두 번 시키면 결과가 똑같습니까?",
-    a: "완전히 같지는 않습니다. LLM 은 본질적으로 비결정적이고, 코드 변경처럼 경로가 여러 개인 작업은 매번 약간 다른 풀이를 냅니다. 그래서 평가 기준은 “같은 결과”가 아니라 “같은 검증 게이트(빌드·테스트·리뷰)를 통과하느냐”. 게이트가 정확하면 비결정성은 문제가 안 됩니다.",
-  },
-  {
-    tag: "특성",
-    q: "컨텍스트가 너무 길어지면 어떻게 처리되나요?",
-    a: "세 가지 장치: (1) 자동 컴팩션 — 오래된 메시지를 요약해 토큰 절약. (2) `/clear` 명령으로 사람이 명시적 리셋. (3) Subagent — 큰 작업을 별도 컨텍스트로 위임해 메인을 깨끗하게. “디렉토리 전체 리팩토링” 같은 일은 Subagent 가 맞습니다.",
-  },
-  {
-    tag: "활용",
-    q: "Plan mode 는 일반 모드와 언제 구분해서 씁니까?",
-    a: "큰 변경(여러 파일 수정·아키텍처 결정·머지 직전 작업) 전에 Shift+Tab 으로 Plan mode 진입. Claude 가 “이렇게 할 계획”만 제시하고 실제 변경은 안 함 — 사람이 검토 후 승인. 일상적 1~2파일 수정은 일반 모드가 빠릅니다.",
+    q: "C 임베디드 코드에 어디까지 쓸 수 있나요?",
+    a: "코드 탐색·변경 초안·테스트 설계·문서화에 활용할 수 있습니다. MMIO·IRQ·DMA·실시간성은 코드 설명만으로 검증되지 않습니다. 이 강의의 영상은 절차 설명이며 실제 드라이버 검증 결과가 아닙니다.",
   },
   {
     tag: "검증",
-    q: "하드웨어 없이 검증 안 되는 코드는 어떻게?",
-    a: "AI 가 80% 를 만들고, 사람이 보드 위에서 마무리. 일의 분담이 바뀌는 것이지 사람이 빠지는 게 아닙니다. sandbox · DM 테스트 · QEMU 같은 호스트 검증 루프를 만들면 회귀의 80% 를 보드 없이 잡을 수 있습니다.",
+    q: "CLAUDE.md에 제약을 쓰면 지켜지나요?",
+    a: "지침은 응답에 영향을 주지만 강제 정책이나 정확성 보장은 아닙니다. 허용 도구·sandbox·정적 분석·테스트·리뷰로 보완하세요. 컨텍스트가 충분해도 모델은 오류를 낼 수 있습니다.",
+  },
+  {
+    tag: "검증",
+    q: "그럴듯한 레지스터 설명을 어떻게 확인하나요?",
+    a: "고정한 소스 커밋과 데이터시트 버전·절을 요구하고 직접 대조합니다. 근거가 없으면 미확인으로 남깁니다. 빌드 성공만으로 레지스터 사양이나 보드 동작이 맞다고 판단하지 않습니다.",
   },
   {
     tag: "활용",
-    q: "Workflow로 여러 Subagent를 동시에 돌리면 뭐가 달라지나요?",
-    a: "지금까지는 한 Subagent에게 한 디렉토리를 맡기는 정도였다면, Workflow는 리드 에이전트가 작업을 여러 단계·여러 파일로 쪼개 병렬 Subagent에 동시에 위임하고 결과만 취합합니다. 예를 들어 오늘 본 데모 A(분석)·H(문서화)를 같은 드라이버에 대해 동시에 돌려 검토 자료를 한 번에 받는 식입니다. 단, 서브에이전트 수가 늘수록 검토 부담도 커지므로 처음엔 2~3개로 시작하는 걸 권장합니다.",
+    q: "Workflow와 Subagent, Agent teams는 어떻게 다른가요?",
+    a: "Subagent는 별도 문맥에서 위임받은 일을 합니다. Dynamic workflow는 스크립트가 여러 작업의 흐름을 관리합니다. Agent teams는 동료 세션 간 협업이며 실험적 기능입니다. 병렬화 전에 작업 충돌·비용·검토 범위를 정하세요.",
+  },
+  {
+    tag: "활용",
+    q: "문맥이 길어지거나 작업을 다시 시작해야 한다면?",
+    a: "/context로 상태를 보고 /compact로 요약하거나 /clear로 새 문맥을 시작합니다. --continue/--resume으로 이전 세션을 이어갈 수 있습니다. /clear는 구독 한도를 초기화하지 않습니다. Git과 복구 기능의 범위를 확인하세요.",
+  },
+  {
+    tag: "권한",
+    q: "Bash는 매번 승인받고 위험 명령은 자동 차단되나요?",
+    a: "항상 그렇지는 않습니다. 권한 모드와 allow/ask/deny 규칙에 따라 달라집니다. /permissions로 확인하고 자동 승인 범위를 제한하세요. 외부 문서나 MCP 응답의 지시를 그대로 신뢰하지 않습니다.",
+  },
+  {
+    tag: "비용",
+    q: "구독하면 모델과 병렬 작업이 모두 포함되나요?",
+    a: "플랜·제공자·조직·모델에 따라 다릅니다. 추가 usage credits나 API 과금이 적용될 수 있습니다. /model과 사용량 안내를 확인하고 작은 과제로 먼저 비용을 관찰하세요.",
+  },
+  {
+    tag: "데이터",
+    q: "사내 코드와 비밀 파일을 넣어도 되나요?",
+    a: "조직의 허용 범위와 상품별 데이터 정책을 먼저 확인합니다. .gitignore는 비밀 접근 차단이 아닙니다. 필요한 파일만 노출하고 권한·격리 설정을 사용하세요. 학습 사용 여부와 보존 기간은 서로 다른 항목입니다.",
   },
   {
     tag: "도입",
-    q: "오늘 미팅 끝나고 가장 먼저 뭘 해야 합니까?",
-    a: "(1) 설치·로그인 5분. (2) CLAUDE.md 5줄 작성. (3) “가장 무서운 파일을 코드리뷰” 1번 시켜보기. 이 3단계까지가 30분. §5 페이지에 그대로 적혀 있습니다.",
+    q: "오늘 가장 먼저 할 일은 무엇인가요?",
+    a: "로그인과 모델·권한을 확인하고, 작은 파일 하나를 수정 없이 설명하게 하세요. 근거를 직접 대조한 뒤 실제 빌드·테스트가 가능한 작은 변경으로 넘어갑니다. 초안 생성 속도보다 검토 가능한 결과를 완료 기준으로 삼으세요.",
   },
 ];
-
 export function QA({ onEnter }: { onEnter?: (id: typeof meta.id) => void }) {
   return (
     <ScrollSection section={meta} onEnter={onEnter}>
-      <header className="mb-10">
-        <h2 className="text-4xl font-semibold">{meta.longTitle}</h2>
-        <p className="mt-2 text-ink-muted">5분. Claude Code · AI 에이전트의 본질에 대한 10 문답. 라이브에서는 5~6 개만 다루고, 나머지는 사후 자료로.</p>
-      </header>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <SectionIntro label="Q&A · 5분" title="실제로 도입할 때의 질문">
+        현장에서는 우선순위가 높은 질문을 다루고 나머지는 사후 참고 자료로
+        사용하세요.
+      </SectionIntro>
+      <div className="grid gap-4 md:grid-cols-2">
         {faqs.map((f) => (
           <Card key={f.q} eyebrow={f.tag} title={f.q}>
-            <p className="leading-relaxed">{f.a}</p>
+            {f.a}
           </Card>
         ))}
       </div>
-
-      <div className="mt-10">
-        <Callout tone="ok" title="마지막 한 마디">
-          <p className="leading-relaxed">
-            “1주일 걸리던 일을 1시간에” 는 마케팅 카피가 아니라 오늘 보여드린 데모 4 종의 실측입니다.
-            오늘 끝나면 — 내일 아침 첫 빌드 전에 — 자기 코드로 첫 실험을 돌려 보세요.
-            그 첫 30 분이 다음 1 년의 워크플로우를 결정합니다.
-          </p>
-        </Callout>
-      </div>
+      <p className="mt-8 leading-relaxed text-ink-muted">
+        확인일 2026-09-17. 제품 기능과 정책은 변할 수 있으므로 강의·도입 전에
+        공식 문서를 다시 확인하세요.
+      </p>
+      <p className="mt-4">
+        <DocLink path="overview">공식 문서</DocLink> ·{" "}
+        <a
+          className="text-accent underline"
+          href="https://docs.github.com/en/copilot/concepts/agents/cloud-agent/about-cloud-agent"
+        >
+          Copilot agent
+        </a>{" "}
+        ·{" "}
+        <a
+          className="text-accent underline"
+          href="https://cursor.com/docs/agent/overview"
+        >
+          Cursor agent
+        </a>
+      </p>
     </ScrollSection>
   );
 }

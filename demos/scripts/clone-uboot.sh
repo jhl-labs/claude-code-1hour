@@ -11,9 +11,10 @@ fi
 
 mkdir -p "$ROOT/demos"
 echo "[clone-uboot] U-Boot 얕은 복제 (depth=1)"
-git clone --depth=1 https://github.com/u-boot/u-boot.git "$DEST"
+git clone --branch v2026.01 --depth=1 https://github.com/u-boot/u-boot.git "$DEST"
 
 echo "[clone-uboot] sandbox 빌드 사전 점검"
 cd "$DEST"
-make sandbox_defconfig >/dev/null
+git rev-parse HEAD
+make O=build/sandbox sandbox_defconfig
 echo "[done] $DEST 준비 완료"

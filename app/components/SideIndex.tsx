@@ -17,9 +17,12 @@ export function SideIndex({ activeId }: Props) {
               <a
                 href={`#${s.id}`}
                 data-active={isActive}
+                aria-current={isActive ? "location" : undefined}
                 className={
                   "flex items-center gap-3 py-1 transition-colors duration-300 ease-smooth " +
-                  (isActive ? "text-accent" : "text-ink-muted hover:text-ink-soft")
+                  (isActive
+                    ? "text-accent"
+                    : "text-ink-muted hover:text-ink-soft")
                 }
               >
                 <span
@@ -29,7 +32,10 @@ export function SideIndex({ activeId }: Props) {
                     (isActive ? "bg-accent" : "bg-ink-muted/50")
                   }
                 />
-                <span>{s.number !== null ? `§${s.number} ` : ""}{s.title}</span>
+                <span>
+                  {s.number !== null ? `§${s.number} ` : ""}
+                  {s.title}
+                </span>
               </a>
             </li>
           );

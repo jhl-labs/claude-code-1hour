@@ -1,102 +1,65 @@
 import { ScrollSection } from "@/app/components/ScrollSection";
-import { VideoPlayer } from "@/app/components/VideoPlayer";
-import { V0HeroLoop } from "@/remotion/compositions/V0HeroLoop";
 import { sections } from "@/app/lib/sections";
-
-const meta = sections.find((s) => s.id === "hero")!;
-
-const agenda: { mins: string; title: string; note: string }[] = [
-  { mins: "0~2",   title: "오프닝",                        note: "오늘 60분에 가져갈 메시지 1줄" },
-  { mins: "2~6",   title: "§1 Claude Code 가 뭔가",        note: "한 줄 정의 · 왜 지금이 변곡점인가" },
-  { mins: "6~18",  title: "§2 핵심 5 가지",                 note: "오늘 바로 쓸 3개 + 나중에 붙일 2개" },
-  { mins: "18~42", title: "§3 임베디드 라이브 데모 4 종",   note: "U-Boot NAND 컨트롤러 · 각 6분" },
-  { mins: "42~48", title: "§4 그래서 우리가 얻는 것",       note: "처리 속도보다 검토 품질과 밀도" },
-  { mins: "48~55", title: "§5 시작하기",                    note: "오늘 30분 · 이번 주 7일" },
-  { mins: "55~60", title: "Q & A",                           note: "라이브 우선 6문답" },
-];
-
+const meta = sections[0];
 export function Hero({ onEnter }: { onEnter?: (id: typeof meta.id) => void }) {
   return (
     <ScrollSection section={meta} onEnter={onEnter}>
-      <div className="grid grid-cols-1 lg:grid-cols-[1.2fr,1fr] gap-12 items-center">
-        <div>
-          <div className="mb-3 text-xs uppercase tracking-[0.2em] text-accent">
-            메모리 컨트롤러 엔지니어를 위한 60분
-          </div>
-          <h1 className="text-5xl lg:text-6xl font-semibold leading-tight">
-            Claude Code,
-            <br />
-            <span className="text-accent">1주일</span> 걸리던 일을
-            <br />
-            <span className="text-accent">1시간</span> 안에.
-          </h1>
-          <p className="mt-6 max-w-xl text-lg text-ink-soft">
-            U-Boot 의 NAND 컨트롤러 드라이버 위에서, 가짜 데모 없이 직접 보여드립니다.
-            오늘 끝나면 — 내일 아침 첫 빌드 전에 — 자기 코드로 첫 실험을 돌릴 수 있습니다.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-2 text-xs">
-            <span className="rounded-full bg-bg-soft px-3 py-1 ring-1 ring-white/10">U-Boot</span>
-            <span className="rounded-full bg-bg-soft px-3 py-1 ring-1 ring-white/10">NAND / MTD</span>
-            <span className="rounded-full bg-bg-soft px-3 py-1 ring-1 ring-white/10">DDR / PHY</span>
-            <span className="rounded-full bg-bg-soft px-3 py-1 ring-1 ring-white/10">Kconfig · Makefile</span>
-            <span className="rounded-full bg-bg-soft px-3 py-1 ring-1 ring-white/10">DM · sandbox</span>
-            <span className="rounded-full bg-bg-soft px-3 py-1 ring-1 ring-white/10">C / 비트필드</span>
-          </div>
-          <p className="mt-3 text-xs text-ink-muted max-w-xl leading-relaxed">
-            오늘 데모는 NAND 위주지만, DDR 컨트롤러·PHY 캘리브레이션·부트로더 코드도 같은 패턴으로 적용됩니다.
-          </p>
-          <div className="mt-10 text-sm text-ink-muted">↓ 시작</div>
-        </div>
-        <div className="opacity-90">
-          <VideoPlayer
-            composition={V0HeroLoop}
-            inputProps={{}}
-            durationInFrames={15 * 30}
-            loop
-            controls={false}
-          />
-        </div>
+      <p className="text-sm uppercase tracking-widest text-accent">
+        임베디드 엔지니어를 위한 60분 · 2026-09-17 확인
+      </p>
+      <h1 className="mt-6 text-4xl font-semibold leading-tight sm:text-6xl">
+        Claude Code,
+        <br />
+        <span className="text-accent">분석에서 검증까지.</span>
+      </h1>
+      <p className="mt-6 max-w-3xl text-lg leading-relaxed text-ink-soft">
+        U-Boot NAND 코드를 소재로 저장소 탐색, 작은 변경, 빌드·테스트 검토를
+        배웁니다. 최신 모델을 선택하고, 작업 범위와 권한을 정하고, 근거가 남는
+        결과를 만드는 것이 목표입니다.
+      </p>
+      <div className="mt-8 rounded-lg border border-accent/30 bg-bg-soft p-6">
+        <h2 className="font-semibold">
+          이 강의의 영상은 설명용 시나리오입니다
+        </h2>
+        <p className="mt-2 leading-relaxed text-ink-soft">
+          Claude의 실제 실행 녹화나 성능 측정 자료가 아닙니다. 명령과 검토
+          절차를 설명하며, 빌드·테스트 성공이나 시간 절감률을 입증하지 않습니다.
+          실제 실행 시 사용할 보드·커밋·도구 체인은 별도로 확인하세요.
+        </p>
       </div>
-
-      {/* 60분 어젠다 */}
-          <div className="mt-16">
-        <div className="mb-4 flex items-baseline justify-between">
-          <h2 className="text-xl font-semibold">오늘 60분 흐름</h2>
-          <span className="text-xs text-ink-muted">데모 24분 · 슬라이드 31분 · Q&A 5분</span>
-        </div>
-        <ol className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {agenda.map((row) => (
-            <li
-              key={row.mins}
-              className="rounded-md bg-bg-soft px-4 py-3 ring-1 ring-white/5"
-            >
-              <div className="flex items-baseline gap-3">
-                <span className="font-mono text-xs text-accent w-16 shrink-0">{row.mins}</span>
-                <div className="min-w-0">
-                  <div className="font-semibold leading-tight">{row.title}</div>
-                  <div className="mt-1 text-xs text-ink-muted leading-snug">{row.note}</div>
-                </div>
-              </div>
+      <div className="mt-8 grid gap-4 md:grid-cols-3">
+        {[
+          "현재 모델·계정·권한 확인",
+          "근거가 있는 분석과 변경 요청",
+          "테스트 결과와 미검증 범위 구분",
+        ].map((t, i) => (
+          <div key={t} className="rounded bg-bg-soft p-5">
+            <span className="text-accent">0{i + 1}</span>
+            <p className="mt-2">{t}</p>
+          </div>
+        ))}
+      </div>
+      <div className="mt-10">
+        <h2 className="mb-4 text-xl font-semibold">60분 진행 순서</h2>
+        <ol className="grid gap-3 sm:grid-cols-2">
+          {sections.map((s) => (
+            <li key={s.id}>
+              <a
+                href={`#${s.id}`}
+                className="flex justify-between rounded bg-bg-soft px-4 py-3 hover:text-accent"
+              >
+                <span>{s.title === "Hero" ? "오프닝" : s.title}</span>
+                <span>{s.durationMinutes}분</span>
+              </a>
             </li>
           ))}
         </ol>
       </div>
-
-      {/* 사전 안내 */}
-      <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-ink-soft">
-        <div className="rounded-md border-l-2 border-accent/50 bg-bg-soft/50 px-4 py-3">
-          <div className="text-xs uppercase tracking-wider text-ink-muted mb-1">대상</div>
-          메모리 컨트롤러·펌웨어·드라이버를 매일 만지는 엔지니어. AI 도구 경험 무관.
-        </div>
-        <div className="rounded-md border-l-2 border-accent/50 bg-bg-soft/50 px-4 py-3">
-          <div className="text-xs uppercase tracking-wider text-ink-muted mb-1">전제</div>
-          본인 PC 에 git 으로 작업 중인 C 프로젝트가 1개 있다면 충분. 별도 준비물 없음.
-        </div>
-        <div className="rounded-md border-l-2 border-accent/50 bg-bg-soft/50 px-4 py-3">
-          <div className="text-xs uppercase tracking-wider text-ink-muted mb-1">결과물</div>
-          오늘 30분이면 첫 명령. 이번 주 안에 코드리뷰·단위테스트 워크플로우에 붙일 수 있음.
-        </div>
-      </div>
+      <p className="mt-6 text-sm leading-relaxed text-ink-muted">
+        준비: 지원 OS, 로그인 가능한 Claude 계정 또는 조직의 API 환경, Git
+        저장소. 빌드 실습에는 대상에 맞는 컴파일러와 의존성이 필요합니다.
+        처음에는 읽기 작업부터 시작합니다.
+      </p>
     </ScrollSection>
   );
 }

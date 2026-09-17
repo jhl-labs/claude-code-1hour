@@ -1,25 +1,15 @@
-"use client";
-import { useEffect } from "react";
-import { useInView } from "@/app/lib/useInView";
 import type { SectionMeta } from "@/app/lib/sections";
-
 type Props = {
   section: SectionMeta;
   onEnter?: (id: SectionMeta["id"]) => void;
   children: React.ReactNode;
 };
-
-export function ScrollSection({ section, onEnter, children }: Props) {
-  const { ref, inView } = useInView<HTMLElement>({ threshold: 0.5 });
-  useEffect(() => {
-    if (inView) onEnter?.(section.id);
-  }, [inView, section.id, onEnter]);
+export function ScrollSection({ section, children }: Props) {
   return (
     <section
-      ref={ref}
       id={section.id}
       data-section-id={section.id}
-      className="min-h-screen flex flex-col justify-center px-8 py-20 lg:pl-64 lg:pr-16 xl:pr-24"
+      className="min-h-screen flex flex-col justify-center px-5 py-16 sm:px-8 lg:pl-64 lg:pr-16 xl:pr-24"
     >
       {children}
     </section>

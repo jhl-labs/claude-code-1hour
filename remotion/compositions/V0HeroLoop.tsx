@@ -9,7 +9,7 @@ const codeLines = [
   "wait_event_timeout(ctrl->irq_wait, ...)",
   "writel(reg, ctrl->base + REG_CMD)",
   "$ make sandbox_defconfig && make -j$(nproc)",
-  "✓ test/dm/nand_denali — PASS",
+  "review → build → test → verify",
   "claude '이 드라이버 함수 책임 분리해줘'",
 ];
 
@@ -17,14 +17,12 @@ export const V0HeroLoop: React.FC = () => {
   const frame = useCurrentFrame();
   const fps = 30;
   return (
-    <AbsoluteFill
-      style={{ background: tokens.colors.bg, overflow: "hidden" }}
-    >
+    <AbsoluteFill style={{ background: tokens.colors.bg, overflow: "hidden" }}>
       {/* 흐르는 코드 라인 */}
       {codeLines.map((line, i) => {
         const speed = 90 + (i % 3) * 30; // px/sec
         const offset = (frame / fps) * speed;
-        const x = ((i * 250 - offset) % 2300 + 2300) % 2300;
+        const x = (((i * 250 - offset) % 2300) + 2300) % 2300;
         const y = 100 + ((i * 110) % 880);
         const opacity = 0.18 + (i % 3) * 0.04;
         return (
@@ -79,7 +77,7 @@ export const V0HeroLoop: React.FC = () => {
             ),
           }}
         >
-          U-BOOT NAND · LIVE
+          U-BOOT NAND · CONCEPT
         </div>
       </div>
       {/* 스캔라인 */}

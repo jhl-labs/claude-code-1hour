@@ -1,208 +1,121 @@
 import { ScrollSection } from "@/app/components/ScrollSection";
-import { Mp4Video } from "@/app/components/Mp4Video";
+import { LessonVideo } from "@/app/components/LessonVideo";
+import { SectionIntro, DocLink } from "@/app/components/SectionIntro";
 import { CodeBlock } from "@/app/components/CodeBlock";
 import { Card } from "@/app/components/Card";
-import { Callout } from "@/app/components/Callout";
 import { sections } from "@/app/lib/sections";
-
-const meta = sections.find((s) => s.id === "getting-started")!;
-
-const claudeMdTemplate = `# 우리 프로젝트
-이 프로젝트는 NAND 컨트롤러 펌웨어다.
-
-## 빌드/실행
-- 빌드: \`make sandbox_defconfig && make -j$(nproc)\`
-- 단위테스트: \`./test/py/test.py --bd=sandbox\`
-- 크로스 빌드: \`make CROSS_COMPILE=arm-linux-gnueabihf- am335x_evm_defconfig\`
-
-## 관습
-- 새 컨트롤러 드라이버는 drivers/mtd/nand/raw/ 에.
-- 비트필드는 FIELD_PREP/FIELD_GET 사용 (직접 시프트/마스크 금지).
-- 신규 코드는 SPDX-License-Identifier 헤더 필수.
-
-## 하드웨어 제약
-- ECC: BCH-8, OOB 64바이트 (변경 불가)
-- 페이지 크기: 4KB
-- 컨트롤러 클럭: 100MHz, AHB 버스
-- DMA 정렬: 16바이트
-
-## 리뷰어가 항상 보는 것
-- race condition (IRQ context vs sleeping function)
-- endianness (cpu_to_le32 누락)
-- 타임아웃 처리 (busy loop 금지)
-`;
-
-const shellSetup = `# 1. 설치 (npm 글로벌)
-npm install -g @anthropic-ai/claude-code
-
-# 2. 인증
-claude login
-
-# 3. 프로젝트 루트로 이동 후 시작
-cd ~/work/u-boot
-claude
-
-# 4. 첫 명령 — 프로젝트 파악시키기
-> CLAUDE.md 를 읽고, 이 저장소 구조를 3문단으로 요약해줘.
-`;
-
-export function GettingStarted({ onEnter }: { onEnter?: (id: typeof meta.id) => void }) {
+const meta = sections[5];
+export function GettingStarted({
+  onEnter,
+}: {
+  onEnter?: (id: typeof meta.id) => void;
+}) {
   return (
     <ScrollSection section={meta} onEnter={onEnter}>
-      <header className="mb-10">
-        <div className="text-xs uppercase tracking-wider text-accent">§5</div>
-        <h2 className="mt-1 text-4xl font-semibold">{meta.longTitle}</h2>
-        <p className="mt-2 text-ink-muted">
-          7분. 라이브에서는 첫 30분만 설명하고, 아래 체크리스트는 사후 참고 자료로 남깁니다.
+      <SectionIntro label="§5 · 7분" title="첫 실행과 다음 7일">
+        라이브에서는 설치 경로·권한·첫 읽기 작업을 설명합니다. 아래 체크리스트로
+        강의 후 자신의 환경에서 시작하세요.
+      </SectionIntro>
+      <LessonVideo id="V11-install" mp4 />
+      <h3 className="text-xl font-semibold">공식 native 설치</h3>
+      <p className="mt-3 leading-relaxed text-ink-soft">
+        OS와 조직 설치 정책에 맞는 명령을 사용하세요. 아래 주소는 공식 설치
+        스크립트입니다. 지원 환경과 다른 설치 방법은 공식 문서에서 확인할 수
+        있습니다.
+      </p>
+      <CodeBlock lang="bash">{`# macOS / Linux / WSL
+curl -fsSL https://claude.ai/install.sh | bash
+
+# 설치 후 인증·확인
+claude auth login
+claude --version
+claude update
+
+# 실제 저장소 경로로 변경
+cd ~/work/u-boot
+claude`}</CodeBlock>
+      <CodeBlock lang="powershell">{`# Windows PowerShell
+irm https://claude.ai/install.ps1 | iex`}</CodeBlock>
+      <p className="mt-3">
+        <DocLink path="overview">설치 안내</DocLink> ·{" "}
+        <DocLink path="cli-reference">인증과 CLI</DocLink> ·{" "}
+        <DocLink path="network-config">프록시·인증서</DocLink>
+      </p>
+      <p className="mt-4 leading-relaxed text-ink-muted">
+        사내 프록시는 HTTPS_PROXY뿐 아니라 인증서·허용 도메인 등 환경 설정이
+        필요할 수 있습니다. 로그인 토큰을 문서나 영상에 남기지 마세요.
+      </p>
+      <h3 className="mt-10 text-xl font-semibold">CLAUDE.md의 시작점</h3>
+      <CodeBlock lang="markdown">{`# 프로젝트 지침
+## 대상
+- 소스 커밋과 보드 설정을 먼저 확인한다.
+- 데이터시트 버전과 근거 위치를 보고한다.
+## 작업
+- 분석 요청에는 파일을 변경하지 않는다.
+- 변경은 작은 diff로 나누고 git diff --check를 실행한다.
+- 검증된 빌드·테스트 명령은 아래에 팀이 추가한다.
+## 보고
+- 실행한 명령과 결과를 기록한다.
+- 보드 미검증 항목과 추정은 구분한다.`}</CodeBlock>
+      <p className="mt-3 leading-relaxed">
+        실제 확인한 빌드 명령과 하드웨어 제약을 추가하세요. ECC 방식·OOB
+        크기·클럭을 다른 보드에서 복사하지 않습니다. CLAUDE.md는 간결하게
+        유지하되 200줄을 넘으면 자동으로 무시된다는 규칙은 없습니다.{" "}
+        <DocLink path="memory">메모리 규칙</DocLink>
+      </p>
+      <h3 className="mt-10 text-xl font-semibold">문맥·복구·사용량</h3>
+      <div className="mt-4 grid gap-4 md:grid-cols-2">
+        <Card title="문맥 정리">
+          /context로 상태를 보고 /compact로 요약합니다. /clear는 현재 문맥을
+          비우며 계정의 사용량 한도를 초기화하지 않습니다.
+        </Card>
+        <Card title="작업 이어가기">
+          claude --continue 또는 claude --resume으로 세션을 이어갑니다. 큰
+          실험은 별도 브랜치·worktree에서 수행하고 Git diff로 변경을 확인합니다.
+        </Card>
+        <Card title="비용 확인">
+          /usage와 /cost에서 제공되는 정보를 확인하세요. 구독 포함 사용량과
+          API·추가 usage credits 과금은 다릅니다. 병렬 작업은 사용량을 늘릴 수
+          있습니다.
+        </Card>
+        <Card title="권한 확인">
+          /permissions로 정책을 확인합니다. 지침, 도구 권한, sandbox는 서로 다른
+          역할입니다. .gitignore는 비밀 파일의 접근 차단 수단이 아닙니다.
+        </Card>
+      </div>
+      <p className="mt-4">
+        <DocLink path="costs">비용 관리</DocLink> ·{" "}
+        <DocLink path="permissions">권한</DocLink> ·{" "}
+        <DocLink path="sandboxing">Sandbox</DocLink> ·{" "}
+        <DocLink path="checkpointing">변경 복구의 범위</DocLink>
+      </p>
+      <div className="mt-8 rounded-lg border border-accent/30 p-6">
+        <h3 className="text-xl font-semibold">코드와 데이터 사용 전 확인</h3>
+        <p className="mt-3 leading-relaxed">
+          소비자 플랜의 데이터 설정과 상용 플랜·API의 정책은 다릅니다. 상용
+          상품은 별도 동의가 없으면 학습에 사용하지 않는 정책이지만, 보존 기간과
+          조직의 허용 범위는 따로 확인해야 합니다. 프록시나 CLAUDE.md만으로 NDA
+          적합성·비밀 보호가 보장되지 않습니다.
         </p>
-      </header>
-
-      {/* 상단: 영상 + 첫 셸 세션 */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr,1fr] gap-8 items-start">
-        <div className="space-y-4">
-          <div className="text-xs uppercase tracking-wider text-ink-muted">V11 · 30초</div>
-          <h3 className="text-xl font-semibold">설치 & 첫 명령</h3>
-          <Mp4Video src="/videos/V11-install.mp4" loop />
-        </div>
-        <Card eyebrow="복붙용" title="첫 셸 세션 — 4 줄이면 끝">
-          <CodeBlock lang="bash">{shellSetup}</CodeBlock>
-          <p className="mt-3 text-xs text-ink-muted">
-            인증은 1회. 이후 같은 셸이면 토큰이 캐시됨. 프록시 환경은 <code className="font-mono">HTTPS_PROXY</code> 만 export.
-          </p>
+        <p className="mt-3">
+          <DocLink path="data-usage">데이터 사용 정책</DocLink> ·{" "}
+          <DocLink path="security">보안 안내</DocLink>
+        </p>
+      </div>
+      <h3 className="mt-10 text-xl font-semibold">첫 30분, 그리고 7일</h3>
+      <div className="mt-4 grid gap-4 md:grid-cols-3">
+        <Card title="첫 30분">
+          설치·인증·권한을 확인하고, 저장소의 작은 파일 하나를 수정 없이
+          분석합니다. 소스와 설명을 직접 대조합니다.
         </Card>
-      </div>
-
-      {/* CLAUDE.md 템플릿 */}
-      <div className="mt-10">
-        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr,1fr] gap-8 items-start">
-          <Card eyebrow="템플릿" title="CLAUDE.md — 우리팀 사정에 맞춘 5분 작성">
-            <CodeBlock lang="markdown">{claudeMdTemplate}</CodeBlock>
-          </Card>
-          <div className="space-y-4">
-            <Callout tone="info" title="작성 원칙">
-              <ul className="space-y-1.5 text-sm">
-                <li>· <strong>빌드 명령은 무조건 1번</strong> 적기 — Claude가 환각으로 만들지 않게.</li>
-                <li>· <strong>하지 말 것</strong>도 적기 — “직접 시프트/마스크 금지” 같은 금기.</li>
-                <li>· <strong>리뷰 관점</strong>을 적기 — race·endianness·timeout.</li>
-                <li>· 길게 쓰지 말 것. 30~60줄이면 충분, 200줄 넘어가면 오히려 무시됨.</li>
-                <li>· 하위 디렉토리에도 별도 <code className="font-mono">CLAUDE.md</code> 가능 (스코프드).</li>
-              </ul>
-            </Callout>
-            <Callout tone="ok" title="좋은 한 줄 vs 나쁜 한 줄">
-              <div className="text-sm space-y-2">
-                <div>
-                  <span className="text-ok">✓</span> <code className="font-mono text-xs">ECC: BCH-8 고정. 변경 시 OOB 레이아웃까지 확인.</code>
-                </div>
-                <div>
-                  <span className="text-warn">✗</span> <code className="font-mono text-xs">ECC 잘 처리해줘.</code> ← Claude가 추측함
-                </div>
-              </div>
-            </Callout>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-10">
-        <Callout tone="info" title="라이브에서 실제로 말할 3가지만">
-          설치, <code className="font-mono text-xs">CLAUDE.md</code>, 첫 작업. 이 세 가지만 끝나면
-          청중은 내일 아침 바로 자기 저장소에서 첫 실험을 시작할 수 있습니다.
-        </Callout>
-      </div>
-
-      {/* 첫 30분 단계 */}
-      <div className="mt-12">
-        <h3 className="mb-4 text-xl font-semibold">오늘 끝나고 바로 할 3단계</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card eyebrow="0~5 분" title="설치 + 로그인">
-            <p>
-              <code className="font-mono text-xs">npm i -g @anthropic-ai/claude-code</code> 후
-              <code className="font-mono text-xs"> claude login</code>. 사내 프록시면 <code className="font-mono text-xs">HTTPS_PROXY</code> 만 export.
-            </p>
-          </Card>
-          <Card eyebrow="5~15 분" title="CLAUDE.md 5줄 + 1 작업">
-            <p>
-              빌드 명령·하드웨어 제약 5줄만 적고, 가장 무서운 파일을 코드리뷰 시키기.
-              여기서 “여긴 틀렸어”라고 바로잡는 과정이 컨텍스트를 쌓는 첫 단계입니다.
-            </p>
-          </Card>
-          <Card eyebrow="15~30 분" title="단위테스트 1개 + 빌드">
-            <p>
-              sandbox 빌드가 도는 폴더에서 <code className="font-mono text-xs">test/dm/</code> 패턴으로
-              테스트 1개 생성 시키기. <code className="font-mono text-xs">./test/py/test.py</code> 까지 PASS 보면 끝.
-            </p>
-          </Card>
-        </div>
-      </div>
-
-      <div className="mt-12">
-        <h3 className="mb-4 text-xl font-semibold">이번 주 7일 플랜</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card eyebrow="Day 1" title="내 저장소에서 첫 성공">
-            가장 무서운 파일 1개 리뷰, 빌드 1회, 테스트 1회. 성공 경험을 먼저 만듭니다.
-          </Card>
-          <Card eyebrow="Day 3" title="반복되는 지식 적기">
-            팀이 자주 하는 주의사항 5~10줄을 <code className="font-mono text-xs">CLAUDE.md</code> 에 정리합니다.
-          </Card>
-          <Card eyebrow="Day 7" title="팀 루프로 연결">
-            리뷰 템플릿, 자주 쓰는 프롬프트, 테스트 명령 1개를 팀 공용 절차로 굳힙니다.
-          </Card>
-        </div>
-      </div>
-
-      {/* 체크리스트 + 트러블슈팅 + 보안 */}
-      <div className="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Card eyebrow="오늘 안 해보면 손해" title="체크리스트">
-          <ul className="space-y-2 text-sm">
-            <li>☐ <code className="font-mono">npm install -g @anthropic-ai/claude-code</code></li>
-            <li>☐ 프로젝트 루트에 CLAUDE.md 5줄 작성</li>
-            <li>☐ 가장 무서운 파일을 Claude에 코드리뷰 시키기</li>
-            <li>☐ 단위테스트 1개 작성 시키기 (sandbox)</li>
-            <li>☐ <code className="font-mono">/ide</code> 로 VS Code 연결</li>
-            <li>☐ <code className="font-mono">.claude/commands/</code> 에 자주 쓰는 명령 1개 저장</li>
-          </ul>
+        <Card title="Day 3">
+          확인된 빌드 명령과 반복되는 검토 항목을 CLAUDE.md에 기록합니다. 작은
+          변경 하나를 검증합니다.
         </Card>
-        <Card eyebrow="자주 막히는 곳" title="트러블슈팅">
-          <ul className="space-y-2 text-sm">
-            <li>· <strong>응답이 엉뚱함</strong> → CLAUDE.md 부재 or 오래된 내용. 최신화 5분.</li>
-            <li>· <strong>Bash 권한 거부</strong> → <code className="font-mono text-xs">/permissions</code> 에서 정책 조정.</li>
-            <li>· <strong>환각 빌드 명령</strong> → CLAUDE.md 에 “빌드: …” 한 줄 박기.</li>
-            <li>· <strong>토큰 한도</strong> → <code className="font-mono text-xs">/clear</code> 로 컨텍스트 정리, 큰 작업은 나눠서.</li>
-            <li>· <strong>대용량 로그</strong> → 파이프 대신 파일로 저장 후 필요한 구간만 읽히기.</li>
-          </ul>
+        <Card title="Day 7">
+          리뷰 결과·총시간·실패 사례를 비교합니다. 반복 절차 하나를 Skill로
+          만들고 팀과 검토합니다.
         </Card>
-        <Card eyebrow="조직 차원" title="보안 / 데이터">
-          <ul className="space-y-2 text-sm">
-            <li>· <strong>엔터프라이즈 플랜</strong>: 학습 미사용 + 보존정책 통제.</li>
-            <li>· <strong>비밀키·고객 데이터</strong>: <code className="font-mono text-xs">.env</code>, <code className="font-mono text-xs">credentials*</code> 자동 무시 — <code className="font-mono text-xs">.gitignore</code> 정비 우선.</li>
-            <li>· <strong>NDA 코드</strong>: 사내 프록시 + 감사 로그 활성화 후 사용.</li>
-            <li>· <strong>금지 명령</strong>: <code className="font-mono text-xs">rm -rf</code>, <code className="font-mono text-xs">git push --force</code> 는 hook 으로 사전 차단.</li>
-            <li>· 자세한 정책은 <strong>보안팀 가이드</strong> 따르기.</li>
-          </ul>
-        </Card>
-      </div>
-
-      {/* 다음 자료 */}
-      <div className="mt-10">
-        <Callout tone="info" title="더 깊이 들어가고 싶을 때">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-            <div>
-              <div className="font-semibold mb-1 text-ink">공식 문서</div>
-              <p>설치·CLI·MCP 레퍼런스. 변경이 빠르므로 분기마다 한 번씩.</p>
-            </div>
-            <div>
-              <div className="font-semibold mb-1 text-ink">사내 슬랙 채널</div>
-              <p>
-                실패담·노하우 공유. 같은 함정에 두 번 빠지지 말 것. 신규 멤버는 핀 메시지부터.
-              </p>
-            </div>
-            <div>
-              <div className="font-semibold mb-1 text-ink">vibe-project-lesson</div>
-              <p>
-                자가학습 28모듈. CLAUDE.md → MCP → Subagent 순으로. 한 번에 몰아보지 말고 주 1모듈 페이스 권장.
-              </p>
-            </div>
-          </div>
-        </Callout>
       </div>
     </ScrollSection>
   );

@@ -1,0 +1,127 @@
+[
+  {
+    "id": "V7-A-legacy-c",
+    "kind": "설명용 시나리오 · 실행 녹화 아님",
+    "duration": 32,
+    "sha256": "afecdd25384e7b63c7e7502a834943ba2b387e285d79c7aafe6defb96a6ffbd4",
+    "source": "https://github.com/u-boot/u-boot/blob/v2026.01/drivers/mtd/nand/raw/davinci_nand.c",
+    "cues": [
+      {
+        "second": 0,
+        "title": "1 · 분석 대상을 고정"
+      },
+      {
+        "second": 8,
+        "title": "2 · 근거를 요구하는 질문"
+      },
+      {
+        "second": 16,
+        "title": "3 · 변경은 하나씩"
+      },
+      {
+        "second": 24,
+        "title": "4 · 리뷰 자료로 마무리"
+      }
+    ]
+  },
+  {
+    "id": "V7-C-build",
+    "kind": "설명용 시나리오 · 실행 녹화 아님",
+    "duration": 32,
+    "sha256": "0d1f63e1891a5079de4a7d959c2ab92affe5e97800b02425b0c38d5f45aacfff",
+    "source": "https://docs.u-boot.org/en/latest/build/gcc.html",
+    "cues": [
+      {
+        "second": 0,
+        "title": "1 · 보드와 도구 체인부터"
+      },
+      {
+        "second": 8,
+        "title": "2 · 설정과 산출물을 분리"
+      },
+      {
+        "second": 16,
+        "title": "3 · 로그와 종료 코드 기록"
+      },
+      {
+        "second": 24,
+        "title": "4 · 빌드와 동작 검증 구분"
+      }
+    ]
+  },
+  {
+    "id": "V7-E-unit-test",
+    "kind": "설명용 시나리오 · 실행 녹화 아님",
+    "duration": 32,
+    "sha256": "c94912395d9c448d085e4f1319174f4b4dcbec933d5329508eda44be1e94802d",
+    "source": "https://docs.u-boot.org/en/latest/develop/tests_writing.html",
+    "cues": [
+      {
+        "second": 0,
+        "title": "1 · 하드웨어와 계산 분리"
+      },
+      {
+        "second": 8,
+        "title": "2 · 비트 필드 경계값 예시"
+      },
+      {
+        "second": 16,
+        "title": "3 · ECC 테스트의 함정"
+      },
+      {
+        "second": 24,
+        "title": "4 · 실패부터 확인"
+      }
+    ]
+  },
+  {
+    "id": "V7-H-docs",
+    "kind": "설명용 시나리오 · 실행 녹화 아님",
+    "duration": 32,
+    "sha256": "399ad2a5eb003343f9b6556560c8b0041655bc6ec0e082c1e8a114e525f0d239",
+    "source": "https://docs.u-boot.org/en/latest/",
+    "cues": [
+      {
+        "second": 0,
+        "title": "1 · 기존 문서부터 검색"
+      },
+      {
+        "second": 8,
+        "title": "2 · 사양과 코드를 연결"
+      },
+      {
+        "second": 16,
+        "title": "3 · 흐름을 그림으로 검토"
+      },
+      {
+        "second": 24,
+        "title": "4 · 변경과 문서를 함께 리뷰"
+      }
+    ]
+  },
+  {
+    "id": "V11-install",
+    "kind": "설명용 시나리오 · 실행 녹화 아님",
+    "duration": 32,
+    "sha256": "b054a35dcf738a6a2d021d10fd7a5fba4f739305c9743217f0a452f9d6043514",
+    "source": "https://code.claude.com/docs/en/overview",
+    "cues": [
+      {
+        "second": 0,
+        "title": "1 · OS와 설치 경로 확인"
+      },
+      {
+        "second": 8,
+        "title": "2 · 인증과 버전 확인"
+      },
+      {
+        "second": 16,
+        "title": "3 · 프로젝트에서 시작"
+      },
+      {
+        "second": 24,
+        "title": "4 · 첫 작업은 읽기부터"
+      }
+    ]
+  }
+]

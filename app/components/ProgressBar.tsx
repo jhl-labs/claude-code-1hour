@@ -8,9 +8,18 @@ export function ProgressBar({ activeId }: Props) {
   const idx = sections.findIndex((s) => s.id === activeId);
   if (idx < 0) return null;
   const current = sections[idx];
-  const remaining = sections.slice(idx).reduce((a, s) => a + s.durationMinutes, 0);
-  const percent = Math.round(((idx + 1) / sections.length) * 100);
-  const label = current.number !== null ? `§${current.number} ${current.title}` : current.title;
+  const remaining = sections
+    .slice(idx)
+    .reduce((a, s) => a + s.durationMinutes, 0);
+  const percent = Math.round(
+    (sections.slice(0, idx).reduce((sum, s) => sum + s.durationMinutes, 0) /
+      sections.reduce((sum, s) => sum + s.durationMinutes, 0)) *
+      100,
+  );
+  const label =
+    current.number !== null
+      ? `§${current.number} ${current.title}`
+      : current.title;
   return (
     <aside
       aria-label="강사 진행 가이드"
@@ -19,7 +28,7 @@ export function ProgressBar({ activeId }: Props) {
       <div className="flex items-center gap-3">
         <span className="font-mono text-accent">{label}</span>
         <span className="text-ink-muted">·</span>
-        <span>남은 약 {remaining}분</span>
+        <span>강의 배분상 남은 약 {remaining}분</span>
         <span className="text-ink-muted">·</span>
         <span>{percent}%</span>
       </div>

@@ -18,7 +18,10 @@
 
 ## 영상
 - 모션 영상은 `remotion/compositions/V*.tsx`. `pnpm remotion:studio`로 미리보기.
-- 임베디드 데모 영상도 Remotion-only 시뮬레이션. `remotion/compositions/V7*.tsx`, `V11Install.tsx`.
+- 교육 영상은 설명용 시나리오이며 실제 Claude 실행·성능 측정이 아니다.
+- 내용·길이·장면 큐의 원본은 `remotion/lesson-data.json`. `LessonFilm`과 본문 transcript가 함께 사용한다.
+- MP4 5편은 `node scripts/videos/render.cjs`로 재생성한다. 포스터·VTT·manifest도 함께 갱신한다.
+- 원본 수정 후 `.audit/after`에 1초 샘플을 생성해 가독성·잘림·정지 구간을 검토한다.
 
 ## 관습
 - 사용자 시스템 정보(호스트명, 사용자명, IP)가 절대 코드/스크립트에 노출되지 않게 한다.
