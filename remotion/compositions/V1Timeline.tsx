@@ -35,8 +35,8 @@ export const milestones: Milestone[] = [
 export const V1Timeline: React.FC = () => {
   const frame = useCurrentFrame();
   const fps = 30;
-  // 라인 진행: 2초~14초 (12초)
-  const lineP = interpolate(frame, [2 * fps, 14 * fps], [0, 1], {
+  // 라인 진행: 2초~16초 (14초)
+  const lineP = interpolate(frame, [2 * fps, 16 * fps], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -104,7 +104,7 @@ export const V1Timeline: React.FC = () => {
           const left = `${(i / (milestones.length - 1)) * 100}%`;
           return (
             <div
-              key={m.year}
+              key={`${m.year}-${m.title}`}
               style={{
                 position: "absolute",
                 left,
