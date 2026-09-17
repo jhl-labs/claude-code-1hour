@@ -1,0 +1,1 @@
+현재 /tmp/claude-uboot는 U-Boot v2026.01이다. git rev-parse HEAD와 drivers/mtd/nand/raw/davinci_nand.c, 관련 헤더를 실제 읽어 1-bit ECC calculate/correct, 4-bit ECC, dev_ready의 흐름을 분석해줘. 파일:행 근거를 붙이고 MMIO와 순수 계산을 구분해줘. 동작 흐름과 테스트 가능한 경계를 한국어 15줄 이내로 최종 보고해줘. 파일은 수정하지 마. 네트워크와 다른 에이전트는 사용하지 마.

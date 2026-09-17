@@ -17,15 +17,15 @@ export function Hero({ onEnter }: { onEnter?: (id: typeof meta.id) => void }) {
         배웁니다. 최신 모델을 선택하고, 작업 범위와 권한을 정하고, 근거가 남는
         결과를 만드는 것이 목표입니다.
       </p>
-      <a href="#embedded-demos" className="mt-6 inline-block rounded-lg bg-accent px-5 py-3 font-semibold text-bg">50초 실제 시연 바로 보기 →</a>
+      <a href="#embedded-demos" className="mt-6 inline-block rounded-lg bg-accent px-5 py-3 font-semibold text-bg">실습 4편 실제 시연 보기 →</a>
       <div className="mt-8 rounded-lg border border-accent/30 bg-bg-soft p-6">
         <h2 className="font-semibold">
           설명은 읽고, 실제 작업은 시연으로 확인합니다
         </h2>
         <p className="mt-2 leading-relaxed text-ink-soft">
           개념과 명령 예제는 직접 넘기는 슬라이드로 읽습니다. 실제 시연에서는
-          Claude Code가 C 파일을 읽고, 오류를 수정하고, 테스트하는 터미널을
-          보여줍니다. 이어서 U-Boot 실습에 적용할 요청과 검토 기준을 살펴봅니다.
+          Claude Code가 U-Boot 코드를 분석하고, ARM으로 컴파일하고, 테스트를
+          작성·실행하고, 근거를 붙여 문서화하는 네 가지 작업을 보여줍니다.
         </p>
       </div>
       <div className="mt-8 grid gap-4 md:grid-cols-3">

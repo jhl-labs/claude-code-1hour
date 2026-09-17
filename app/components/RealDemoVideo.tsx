@@ -1,5 +1,6 @@
 "use client";
 import { useRef } from "react";
+import { pauseOtherVideos } from "@/app/lib/pauseOtherVideos";
 import { assetPath } from "@/app/lib/assetPath";
 import recording from "@/public/videos/real-demo.json";
 
@@ -11,7 +12,7 @@ export function RealDemoVideo() {
       <div className="flex flex-wrap items-center gap-3"><span className="rounded bg-accent/15 px-3 py-1 text-sm text-accent">실제 Claude Code 실행 녹화</span><span className="text-sm text-ink-muted">{Math.round(recording.duration)}초 · 무음 · 수동 재생</span></div>
       <h3 className="mt-4 text-2xl font-semibold">C 코드의 버그를 찾고, 고치고, 테스트하기</h3>
       <p className="mt-3 leading-relaxed text-ink-soft">하위 12비트를 추출해야 하는 함수에 8비트 마스크를 넣었습니다. Claude Code에 먼저 읽기만 요청하고, 실패를 재현한 뒤 한 줄을 수정하도록 요청합니다.</p>
-      <video ref={video} controls playsInline preload="metadata" className="mt-5 w-full rounded-lg bg-black" poster={assetPath(`/videos/posters/claude-code-real.jpg?v=${revision}`)} src={assetPath(`/videos/claude-code-real.mp4?v=${revision}`)}>
+      <video onPlay={(e)=>pauseOtherVideos(e.currentTarget)} ref={video} controls playsInline preload="metadata" className="mt-5 w-full rounded-lg bg-black" poster={assetPath(`/videos/posters/claude-code-real.jpg?v=${revision}`)} src={assetPath(`/videos/claude-code-real.mp4?v=${revision}`)}>
         <track kind="captions" srcLang="ko" label="한국어 해설" default src={assetPath(`/videos/claude-code-real.vtt?v=${revision}`)} />
       </video>
       <p className="mt-3 text-sm leading-relaxed text-ink-muted">{recording.recordedAt} · Claude Code {recording.cliVersion} · {recording.model}. 실제 터미널 화면을 녹화했습니다. {recording.editing} 작은 화면에서는 전체화면으로 보세요.</p>

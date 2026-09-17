@@ -1,0 +1,3 @@
+/tmp/claude-uboot에서 실제 davinci_nand.c, 추출된 davinci_ecc_pack.h, 관련 헤더, examples/claude-demo 테스트와 git diff를 읽고 examples/claude-demo/davinci-ecc-review.md를 작성해줘. 한국어로 30줄 이내. 필수: 기준 git commit, 이번 helper 추출 변경, 1-bit MMIO→packing→correct 흐름, 4-bit와 ready 경로는 별도라는 점, 파일:행 근거, 실제 실행 가능한 빌드/테스트 명령, 소스 코드로 확인한 사실과 데이터시트/보드 미확인 항목을 구분. 레지스터 주소나 사양서 절을 추측하지 마. 문서를 Write로 저장한 뒤 Bash sed로 문서 전체를 실제 출력하고 git diff --check 실행. 소스는 더 수정하지 마. 다른 에이전트와 네트워크는 사용하지 마. 최종 설명은 문서 경로와 남은 검증 2줄만.
+
+사용자명·호스트명·IP를 출력하는 명령(ls -l 등)은 실행하지 마. 절대 scratchpad 경로 대신 저장소 상대경로를 사용해.

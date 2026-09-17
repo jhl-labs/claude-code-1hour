@@ -1,0 +1,344 @@
+diff --git a/drivers/mtd/nand/raw/davinci_nand.c b/drivers/mtd/nand/raw/davinci_nand.c
+index d4daf06b..4926b260 100644
+--- a/drivers/mtd/nand/raw/davinci_nand.c
++++ b/drivers/mtd/nand/raw/davinci_nand.c
+@@ -36,6 +36,7 @@
+ #include <dm/uclass.h>
+ #include <asm/ti-common/davinci_nand.h>
+ #include <linux/printk.h>
++#include "davinci_ecc_pack.h"
+ 
+ /* Definitions for 4-bit hardware ECC */
+ #define NAND_TIMEOUT			10240
+@@ -196,16 +197,7 @@ static int nand_davinci_calculate_ecc(struct mtd_info *mtd, const u_char *dat,
+ 
+ 	tmp = nand_davinci_readecc(mtd);
+ 
+-	/* Squeeze 4 bytes ECC into 3 bytes by removing RESERVED bits
+-	 * and shifting. RESERVED bits are 31 to 28 and 15 to 12. */
+-	tmp = (tmp & 0x00000fff) | ((tmp & 0x0fff0000) >> 4);
+-
+-	/* Invert so that erased block ECC is correct */
+-	tmp = ~tmp;
+-
+-	*ecc_code++ = tmp;
+-	*ecc_code++ = tmp >>  8;
+-	*ecc_code++ = tmp >> 16;
++	davinci_ecc_pack_1bit(tmp, ecc_code);
+ 
+ 	/* NOTE:  the above code matches mainline Linux:
+ 	 *	.PQR.stu ==> ~PQRstu
+diff --git a/drivers/mtd/nand/raw/davinci_ecc_pack.h b/drivers/mtd/nand/raw/davinci_ecc_pack.h
+new file mode 100644
+index 00000000..cd2d76d8
+--- /dev/null
++++ b/drivers/mtd/nand/raw/davinci_ecc_pack.h
+@@ -0,0 +1,36 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Bit packing helper for the DaVinci 1-bit hardware ECC result register.
++ *
++ * Extracted from nand_davinci_calculate_ecc() so the bit compaction /
++ * inversion / byte packing logic can be unit tested independently of
++ * the MMIO read.
++ */
++
++#ifndef __DAVINCI_ECC_PACK_H__
++#define __DAVINCI_ECC_PACK_H__
++
++/**
++ * davinci_ecc_pack_1bit - squeeze the raw 32-bit 1-bit ECC register value
++ * into the 3-byte on-flash ECC representation.
++ * @raw_ecc: raw value read from davinci_emif_regs->nandfecc[]
++ * @ecc_code: output buffer, must hold at least 3 bytes
++ *
++ * Squeeze 4 bytes ECC into 3 bytes by removing RESERVED bits and
++ * shifting. RESERVED bits are 31 to 28 and 15 to 12. The result is
++ * then inverted so that the erased block ECC is correct.
++ */
++static inline void davinci_ecc_pack_1bit(u_int32_t raw_ecc, u_char *ecc_code)
++{
++	u_int32_t tmp = raw_ecc;
++
++	tmp = (tmp & 0x00000fff) | ((tmp & 0x0fff0000) >> 4);
++
++	tmp = ~tmp;
++
++	ecc_code[0] = tmp;
++	ecc_code[1] = tmp >>  8;
++	ecc_code[2] = tmp >> 16;
++}
++
++#endif /* __DAVINCI_ECC_PACK_H__ */
+diff --git a/examples/claude-demo/ecc_pack_test.c b/examples/claude-demo/ecc_pack_test.c
+new file mode 100644
+index 00000000..1017bf2d
+--- /dev/null
++++ b/examples/claude-demo/ecc_pack_test.c
+@@ -0,0 +1,113 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Host unit test for davinci_ecc_pack_1bit().
++ *
++ * Compares the real production helper (included verbatim from the
++ * driver tree) against an independently bit-assembled reference
++ * implementation, over a deterministic set of >= 1000 inputs plus a
++ * handful of fixed boundary values. Also checks that the RESERVED
++ * bits (31:28 and 15:12) are ignored by the packing.
++ */
++
++#define _DEFAULT_SOURCE
++#include <assert.h>
++#include <stdint.h>
++#include <stdio.h>
++#include <sys/types.h>
++
++#include "davinci_ecc_pack.h"
++
++/* Independent reference: assemble the 3 output bytes bit by bit,
++ * without reusing the shift/mask trick used in the driver. */
++static void reference_pack(uint32_t raw_ecc, unsigned char *out)
++{
++	/* The compacted 24-bit value takes bits 0..11 of raw_ecc
++	 * verbatim, and bits 12..23 from raw_ecc bits 16..27
++	 * (i.e. the RESERVED bits 31:28 and 15:12 are dropped). */
++	unsigned char compact[24];
++	unsigned char b;
++	int i, j;
++
++	for (i = 0; i < 12; i++)
++		compact[i] = (raw_ecc >> i) & 1;
++	for (i = 0; i < 12; i++)
++		compact[12 + i] = (raw_ecc >> (16 + i)) & 1;
++
++	for (i = 0; i < 3; i++) {
++		b = 0;
++		for (j = 0; j < 8; j++) {
++			int bitpos = i * 8 + j;
++			unsigned char bit = compact[bitpos] ^ 1; /* invert */
++
++			b = (unsigned char)(b | (bit << j));
++		}
++		out[i] = b;
++	}
++}
++
++static void check_one(uint32_t raw_ecc)
++{
++	unsigned char got[3];
++	unsigned char want[3];
++
++	davinci_ecc_pack_1bit(raw_ecc, got);
++	reference_pack(raw_ecc, want);
++
++	assert(got[0] == want[0]);
++	assert(got[1] == want[1]);
++	assert(got[2] == want[2]);
++}
++
++int main(void)
++{
++	unsigned int i;
++
++	/* Fixed boundary values. */
++	uint32_t boundaries[] = {
++		0x00000000u,
++		0xffffffffu,
++		0x00000fffu, /* low 12 bits set */
++		0x0fff0000u, /* mid 12 bits set */
++		0xf0000000u, /* reserved bits 31:28 only */
++		0x0000f000u, /* reserved bits 15:12 only */
++		0xffff0fffu,
++		0x12345678u,
++		0xa5a5a5a5u,
++		0x5a5a5a5au,
++	};
++
++	for (i = 0; i < sizeof(boundaries) / sizeof(boundaries[0]); i++)
++		check_one(boundaries[i]);
++
++	/* Reserved bits (31:28, 15:12) must be ignored: verify the
++	 * packed output does not change when only reserved bits differ. */
++	{
++		unsigned char base[3], with_reserved[3];
++		uint32_t clean = 0x1234abcdu & ~0xf000f000u;
++		uint32_t noisy = clean | 0xf000f000u;
++
++		davinci_ecc_pack_1bit(clean, base);
++		davinci_ecc_pack_1bit(noisy, with_reserved);
++
++		assert(base[0] == with_reserved[0]);
++		assert(base[1] == with_reserved[1]);
++		assert(base[2] == with_reserved[2]);
++	}
++
++	/* Deterministic pseudo-random sweep, >= 1000 inputs. */
++	{
++		uint32_t state = 0x2463a1b5u;
++
++		for (i = 0; i < 5000; i++) {
++			/* xorshift32, deterministic across runs */
++			state ^= state << 13;
++			state ^= state >> 17;
++			state ^= state << 5;
++
++			check_one(state);
++		}
++	}
++
++	printf("ecc_pack_test: all checks passed\n");
++	return 0;
++}
+diff --git a/examples/claude-demo/run_mutant_check.py b/examples/claude-demo/run_mutant_check.py
+new file mode 100644
+index 00000000..d77dc70c
+--- /dev/null
++++ b/examples/claude-demo/run_mutant_check.py
+@@ -0,0 +1,106 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: GPL-2.0+
++"""
++Mutation check for ecc_pack_test.c.
++
++Compiles and runs the test against the real davinci_ecc_pack.h (must
++pass), then against a temporary copy with one mask bit deliberately
++flipped (must fail). The original header in the repo is never
++modified.
++"""
++import resource
++import subprocess
++import sys
++import tempfile
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parent
++DRIVER_DIR = ROOT.parent.parent / "drivers" / "mtd" / "nand" / "raw"
++REAL_HEADER = DRIVER_DIR / "davinci_ecc_pack.h"
++TEST_SRC = ROOT / "ecc_pack_test.c"
++
++CC_ARGS = ["cc", "-std=c11", "-Wall", "-Wextra", "-Werror"]
++
++SIGABRT = 6
++
++
++def _disable_core_dump():
++    resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
++
++
++class CompileError(Exception):
++    pass
++
++
++def compile_and_run(header_dir: Path, label: str) -> int:
++    """Returns the test binary's returncode. Raises CompileError if
++    compilation itself fails (which must never be treated as a
++    successful mutant detection)."""
++    with tempfile.TemporaryDirectory() as build_dir:
++        binary = Path(build_dir) / "ecc_pack_test"
++        compile_cmd = CC_ARGS + [
++            "-I", str(header_dir),
++            str(TEST_SRC),
++            "-o", str(binary),
++        ]
++        compiled = subprocess.run(compile_cmd, capture_output=True, text=True)
++        if compiled.returncode != 0:
++            raise CompileError(
++                f"[{label}] compile failed:\n{compiled.stdout}{compiled.stderr}")
++        run = subprocess.run([str(binary)], capture_output=True, text=True,
++                              preexec_fn=_disable_core_dump)
++        print(f"[{label}] exit={run.returncode} {run.stdout.strip()} {run.stderr.strip()}")
++        return run.returncode
++
++
++def main() -> int:
++    # 1) Baseline: real header must compile and pass.
++    try:
++        baseline_rc = compile_and_run(DRIVER_DIR, "baseline (real header)")
++    except CompileError as e:
++        print(f"FAIL: baseline failed to compile: {e}")
++        return 1
++    if baseline_rc != 0:
++        print("FAIL: baseline test did not pass against the real header")
++        return 1
++
++    # 2) Mutant: copy the whole driver dir to a temp location, flip one
++    #    mask bit in the copied header only, leave the original intact.
++    original_text = REAL_HEADER.read_text()
++    mutated_text = original_text.replace(
++        "tmp = (tmp & 0x00000fff) | ((tmp & 0x0fff0000) >> 4);",
++        "tmp = (tmp & 0x00000ffe) | ((tmp & 0x0fff0000) >> 4);",
++        1,
++    )
++    if mutated_text == original_text:
++        print("FAIL: mutation pattern not found in header; nothing was mutated")
++        return 1
++
++    with tempfile.TemporaryDirectory() as mutant_dir:
++        mutant_dir_path = Path(mutant_dir)
++        mutant_header = mutant_dir_path / "davinci_ecc_pack.h"
++        mutant_header.write_text(mutated_text)
++
++        try:
++            mutant_rc = compile_and_run(mutant_dir_path, "mutant (1 mask bit flipped)")
++        except CompileError as e:
++            assert REAL_HEADER.read_text() == original_text, \
++                "original header was modified, this must never happen"
++            print(f"FAIL: mutant failed to compile instead of failing at runtime: {e}")
++            return 1
++
++    assert REAL_HEADER.read_text() == original_text, \
++        "original header was modified, this must never happen"
++
++    if mutant_rc != -SIGABRT:
++        print(f"FAIL: mutant did not abort via assertion (SIGABRT); "
++              f"got returncode={mutant_rc} instead")
++        return 1
++
++    print("OK: baseline passes, mutant aborts via assertion (SIGABRT), "
++          "original header untouched")
++    return 0
++
++
++if __name__ == "__main__":
++    sys.exit(main())
+diff --git a/examples/claude-demo/davinci-ecc-review.md b/examples/claude-demo/davinci-ecc-review.md
+new file mode 100644
+index 00000000..661abf8e
+--- /dev/null
++++ b/examples/claude-demo/davinci-ecc-review.md
+@@ -0,0 +1,35 @@
++# davinci_nand.c 1-bit ECC helper 추출 검토
++
++기준 커밋: `127a42c7` "Prepare v2026.01" (검토 시점 워킹트리는 여기에 unstaged 변경 포함).
++
++## 변경 요약
++- `drivers/mtd/nand/raw/davinci_nand.c:200` `nand_davinci_calculate_ecc()` 내부의, raw 32비트에서 RESERVED 8비트(31:28, 15:12)를 제거해 24비트(3바이트)로 압축/반전/분해하는 로직(원래 인라인 코드, `git diff` 기준 10줄 삭제)을 `davinci_ecc_pack_1bit()` 함수 호출 한 줄로 대체.
++- 새 파일 `drivers/mtd/nand/raw/davinci_ecc_pack.h`에 동일 로직을 `static inline`으로 추출, `#include "davinci_ecc_pack.h"`를 `davinci_nand.c:39` 부근에 추가.
++- 비트 연산 자체(`tmp & 0x00000fff`, `>> 4`, `~tmp`, 바이트 분해)는 원본과 1:1 동일 — 로직 변경 없음, 함수 경계만 이동.
++
++## 1-bit ECC 흐름 (davinci_nand.c 기준)
++1. MMIO 읽기: `nand_davinci_readecc()` (davinci_nand.c:170-178)가 `davinci_emif_regs->nandfecc[CFG_SYS_NAND_CS-2]`를 `__raw_readl`로 읽음.
++2. 호출부: `nand_davinci_calculate_ecc()` (davinci_nand.c:193-216)가 `tmp = nand_davinci_readecc(mtd)` 후 `davinci_ecc_pack_1bit(tmp, ecc_code)` 호출 (davinci_nand.c:198,200).
++3. Packing: `davinci_ecc_pack_1bit()` (davinci_ecc_pack.h:24-33)가 RESERVED 비트(31:28, 15:12) 제거 후 12+12비트를 압축, 반전(`~tmp`), 3바이트로 분해.
++4. Correct: `nand_davinci_correct_data()` (davinci_nand.c:218~)가 `read_ecc`/`calc_ecc` 3바이트를 다시 24비트로 합쳐 XOR로 비교/정정.
++
++## 4-bit ECC 및 ready 경로는 별개
++- 4-bit ECC 적재/정정 코드는 `nand4biteccload` 레지스터를 사용하는 별도 블록(davinci_nand.c:579 부근, `CONFIG_SYS_NAND_4BIT_HW_ECC_OOBFIRST` 하)이며 이번 변경과 무관, `davinci_ecc_pack_1bit()`를 호출하지 않음.
++- `nand_davinci_dev_ready()` (davinci_nand.c:724-727)는 `nandfsr` 레지스터의 비트0만 읽는 독립 함수로, ECC packing과 무관.
++
++## 테스트/빌드 명령
++호스트 유닛테스트 (본 PC에서 이미 실행/검증 완료, 보드 실행용 테스트 아님):
++```
++python3 examples/claude-demo/run_mutant_check.py
++```
++`cc -std=c11 -Wall -Wextra -Werror -I drivers/mtd/nand/raw examples/claude-demo/ecc_pack_test.c`로 호스트 바이너리를 빌드해 baseline 통과 + mutant(mask 비트 1개 반전) SIGABRT만 확인하며, 실보드 NAND I/O는 거치지 않음.
++
++실제 1-bit ECC 설정의 교차 컴파일 오브젝트 확인 (`build/da850-1bit-demo/.config`가 사전에 준비되어 `CONFIG_SYS_NAND_HW_ECC=y`인 것을 확인함):
++```
++make -j4 O=build/da850-1bit-demo CROSS_COMPILE=arm-linux-gnueabi- drivers/mtd/nand/raw/davinci_nand.o
++```
++
++## 확인 구분
++- 소스 코드로 직접 확인: 위 함수 경계, 비트 마스크 값, include 위치, 4-bit/ready 코드와의 분리, 호스트 유닛테스트 결과.
++- 데이터시트/보드 미확인: `nandfecc`/`nandfsr`/`nand4biteccload` 레지스터의 실제 SoC 주소, 비트필드 사양서 절 번호.
++- 남은 보드 검증: 실보드에서 NAND read/write 및 오류 주입 테스트, 데이터시트 대조.

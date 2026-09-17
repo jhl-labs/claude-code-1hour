@@ -1,4 +1,5 @@
 import { ScrollSection } from "@/app/components/ScrollSection";
+import { PracticeVideo } from "@/app/components/PracticeVideo";
 import { RealDemoVideo } from "@/app/components/RealDemoVideo";
 import { LessonSlides } from "@/app/components/LessonSlides";
 import { SectionIntro } from "@/app/components/SectionIntro";
@@ -19,7 +20,7 @@ const demos = [
     id: "V7-C-build",
     title: "2 · 빌드 설정과 결과 검토",
     prompt:
-      "이 드라이버를 실제로 컴파일하는 보드 설정과 Kconfig 의존성을 찾아줘. 사용할 toolchain과 출력 디렉토리를 명시한 검증 계획을 먼저 제시해줘. 없는 설정을 만들어내지 마.",
+      "da850evm_nand_defconfig의 NAND_DAVINCI 설정을 확인하고 arm-linux-gnueabi-와 별도 O= 출력 디렉토리로 davinci_nand.o를 실제 컴파일해줘. 생성 .config와 file 결과를 확인하고 보드 미검증 항목을 보고해줘.",
     review:
       "최종 .config, 변경 object의 컴파일 여부, 명령의 exit code를 확인합니다. sandbox 성공만으로 DaVinci 하드웨어 지원을 검증했다고 판단하지 않습니다.",
   },
@@ -27,7 +28,7 @@ const demos = [
     id: "V7-E-unit-test",
     title: "3 · 테스트 가능한 경계 만들기",
     prompt:
-      "MMIO와 순수 계산을 분리할 수 있는 최소 변경을 제안해줘. mock이 실제 코드와 연결되는 방법, 정상·경계·오류 테스트, 빌드 등록을 설명해줘. 실행하지 않은 결과는 PASS라고 적지 마.",
+      "1-bit ECC의 비트 포장만 helper로 추출하고 드라이버와 호스트 테스트가 같은 함수를 사용하게 해줘. 경계값·reserved bit·독립 기준 계산을 검사하고, 마스크를 일부러 바꾼 mutant가 assertion으로 실패하는지 확인해줘. 1-bit 설정에서 ARM 컴파일도 확인해줘.",
     review:
       "테스트가 의도한 오류를 실제로 잡는지 먼저 확인합니다. 드라이버의 static 함수나 하드웨어 ECC 함수를 다른 파일에서 임의 호출하지 않습니다.",
   },
@@ -51,15 +52,16 @@ export function EmbeddedDemos({
         label="§3 · 24분 · 시연 → 코드 검토 → 직접 실습"
         title="실제 작업을 보고, 내 코드에 적용하기"
       >
-        먼저 실제 Claude Code 터미널에서 분석 → 실패 재현 → 수정 → 재검증을
-        확인합니다. 작은 독립 C 예제로 흐름을 익힌 뒤 U-Boot NAND 코드로
-        범위를 넓힙니다.
+        같은 U-Boot 소스로 분석 → ARM 교차 컴파일 → 테스트 작성·실행 → 문서화를
+        직접 수행했습니다. 각 실습의 실제 Claude Code 영상을 보고, 같은
+        요청을 실행한 뒤 결과를 비교하세요.
       </SectionIntro>
-      <RealDemoVideo />
-      <h3 className="mt-12 mb-4 text-2xl font-semibold">응용 실습 · U-Boot NAND</h3>
+      <nav aria-label="실습 시연 목록" className="my-6 grid gap-3 sm:grid-cols-2">
+        {demos.map(d=><a key={d.id} href={`#practice-${d.id}`} className="rounded-lg border border-accent/30 bg-bg-soft p-4 text-accent">{d.title} · 실제 시연 ↓</a>)}
+      </nav>
       <p className="rounded bg-bg-soft p-5 leading-relaxed text-ink-soft">
-        아래는 직접 실행할 실습 가이드입니다. 예제를 읽고 → 원본 코드와 대조하고
-        → 프롬프트를 실행하고 → 검증 범위를 토론하세요. 참고 소스는{" "}
+        실제 시연 → 요청과 검토 기준 → 직접 실습 순서로 진행합니다.
+        보드 실행 없이 확인한 범위는 각 영상 아래에 명시했습니다. 기준 소스는{" "}
         <a
           href="https://github.com/u-boot/u-boot/blob/v2026.01/drivers/mtd/nand/raw/davinci_nand.c"
           className="text-accent underline"
@@ -70,9 +72,10 @@ export function EmbeddedDemos({
       </p>
       <div className="mt-10 space-y-12">
         {demos.map((d) => (
-          <article key={d.id}>
+          <article key={d.id} id={`practice-${d.id}`} className="scroll-mt-6">
             <h3 className="text-2xl font-semibold">{d.title}</h3>
-            <LessonSlides id={d.id} />
+            <PracticeVideo id={d.id} />
+            <details className="my-5 rounded-lg border border-white/10 p-4"><summary className="cursor-pointer text-ink-soft">단계별 설명 슬라이드 펼치기</summary><LessonSlides id={d.id} /></details>
             <h4 className="font-semibold">직접 사용할 요청</h4>
             <p className="mt-2 rounded border-l-2 border-accent bg-bg-soft p-4 leading-relaxed">
               {d.prompt}
@@ -82,6 +85,7 @@ export function EmbeddedDemos({
           </article>
         ))}
       </div>
+      <details className="mt-10 rounded-lg bg-bg-soft p-6"><summary className="cursor-pointer text-xl font-semibold">처음이라면 · 작은 C 예제 50초 워밍업</summary><RealDemoVideo /></details>
       <details className="mt-10 rounded-lg bg-bg-soft p-6">
         <summary className="cursor-pointer text-xl font-semibold">
           실행 가능한 작은 테스트와 문서 예제

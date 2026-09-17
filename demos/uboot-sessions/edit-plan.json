@@ -1,0 +1,229 @@
+[
+  {
+    "id": "V7-A-legacy-c",
+    "session": "analysis",
+    "posterSecond": 5,
+    "summary": "davinci_nand.c를 실제로 읽고, ECC 계산·보정과 ready 경로에서 MMIO와 순수 계산을 구분합니다.",
+    "cuts": [
+      {
+        "start": 28,
+        "end": 49
+      },
+      {
+        "start": 73,
+        "end": 88
+      }
+    ],
+    "chapters": [
+      {
+        "second": 0,
+        "title": "커밋·소스 탐색",
+        "caption": "기준 커밋과 실제 드라이버를 읽고 1-bit·4-bit ECC 및 ready 경로를 분석합니다."
+      },
+      {
+        "second": 21,
+        "title": "원본 코드와 설명 대조",
+        "caption": "sed로 원본 코드를 출력합니다. 레지스터 읽기 뒤의 비트 포장과 ready의 MMIO 접근을 직접 대조합니다."
+      }
+    ],
+    "results": [
+      "기준 커밋 127a42c7257a6ffbbd1575ed1cbaa8f5408a44b3을 확인했습니다.",
+      "1-bit packing은 MMIO 결과를 입력으로 받는 순수 계산으로 분리할 수 있습니다.",
+      "4-bit 보정과 dev_ready는 실제 레지스터 접근을 포함합니다. 분석 시연에서는 파일을 수정하지 않았습니다."
+    ],
+    "commands": [
+      "git rev-parse HEAD",
+      "sed -n '192,209p' drivers/mtd/nand/raw/davinci_nand.c",
+      "sed -n '732,735p' drivers/mtd/nand/raw/davinci_nand.c"
+    ],
+    "limitations": "코드 경로를 분석한 결과입니다. 데이터시트와 실제 보드 동작을 검증한 것은 아닙니다."
+  },
+  {
+    "id": "V7-C-build",
+    "session": "build",
+    "posterSecond": 21,
+    "summary": "da850evm_nand 설정을 찾고 arm-linux-gnueabi-gcc로 실제 DaVinci NAND object를 컴파일합니다.",
+    "cuts": [
+      {
+        "start": 1,
+        "end": 30
+      }
+    ],
+    "chapters": [
+      {
+        "second": 0,
+        "title": "설정·도구 확인",
+        "caption": "Kconfig·Makefile 연결과 ARM 교차 컴파일러를 확인합니다."
+      },
+      {
+        "second": 6,
+        "title": "실제 드라이버 컴파일",
+        "caption": "별도 출력 디렉토리에 defconfig를 생성하고 davinci_nand.o를 실제 컴파일합니다."
+      },
+      {
+        "second": 18,
+        "title": "ARM object·ECC 설정 확인",
+        "caption": "생성 파일은 ARM EABI5 object입니다. 기본 설정은 4-bit ECC이며 전체 펌웨어나 보드는 실행하지 않았습니다."
+      }
+    ],
+    "results": [
+      "CONFIG_NAND_DAVINCI=y와 Makefile의 davinci_nand.o 연결을 확인했습니다.",
+      "da850evm_nand_defconfig 생성 및 드라이버 object 컴파일이 성공했습니다.",
+      "file 출력: ELF 32-bit LSB relocatable, ARM, EABI5.",
+      "기본 설정은 CONFIG_SYS_NAND_4BIT_HW_ECC_OOBFIRST=y입니다."
+    ],
+    "commands": [
+      "arm-linux-gnueabi-gcc --version",
+      "make O=build/da850-demo CROSS_COMPILE=arm-linux-gnueabi- da850evm_nand_defconfig",
+      "make -j4 O=build/da850-demo CROSS_COMPILE=arm-linux-gnueabi- drivers/mtd/nand/raw/davinci_nand.o",
+      "file build/da850-demo/drivers/mtd/nand/raw/davinci_nand.o"
+    ],
+    "limitations": "해당 드라이버 object 컴파일만 확인했습니다. 전체 U-Boot 링크·이미지 생성·부팅·NAND 읽기/쓰기는 수행하지 않았습니다."
+  },
+  {
+    "id": "V7-E-unit-test",
+    "session": "test",
+    "posterSecond": 80,
+    "summary": "실제 드라이버의 1-bit ECC 비트 포장을 helper로 추출합니다. 같은 코드를 호스트에서 검사하고, 잘못 바꾼 코드가 실패하는지 확인한 뒤 테스트 스크립트의 오류도 리뷰·수정합니다.",
+    "cuts": [
+      {
+        "start": 1,
+        "end": 28
+      },
+      {
+        "start": 40,
+        "end": 58
+      },
+      {
+        "start": 188,
+        "end": 208
+      },
+      {
+        "start": 338,
+        "end": 361
+      },
+      {
+        "start": 387,
+        "end": 390
+      },
+      {
+        "start": 426,
+        "end": 438
+      }
+    ],
+    "redactions": [
+      [
+        209,
+        240
+      ]
+    ],
+    "chapters": [
+      {
+        "second": 0,
+        "title": "실제 helper 추출",
+        "caption": "MMIO 읽기는 드라이버에 남기고 순수 비트 포장을 공통 helper로 추출하도록 요청합니다."
+      },
+      {
+        "second": 27,
+        "title": "같은 헤더를 쓰는 테스트",
+        "caption": "경계값·reserved bit 및 5,000개 결정적 입력을 독립 비트별 기준 계산과 비교하는 테스트를 작성합니다."
+      },
+      {
+        "second": 45,
+        "title": "실행·설정 확인",
+        "caption": "호스트 테스트와 mutant를 실행하고, 수정한 1-bit 분기를 컴파일할 별도 설정을 준비합니다."
+      },
+      {
+        "second": 65,
+        "title": "테스트 스크립트도 리뷰",
+        "caption": "컴파일 실패를 mutant 검출로 오인하지 않도록 리뷰 후 수정을 요청합니다."
+      },
+      {
+        "second": 88,
+        "title": "정상 통과·변이 실패",
+        "caption": "실제 재실행에서 baseline은 exit 0, mutant는 assertion 실패(SIGABRT)입니다."
+      },
+      {
+        "second": 91,
+        "title": "1-bit 설정·최종 범위 확인",
+        "caption": "1-bit ECC 설정과 diff 검사를 확인합니다. 검증 범위는 비트 포장과 컴파일이며 실제 NAND 보드 동작은 아닙니다."
+      }
+    ],
+    "results": [
+      "davinci_nand.c와 호스트 테스트가 실제 davinci_ecc_pack.h를 함께 사용합니다.",
+      "10개 고정 입력, reserved bit 불변성, 5,000개 결정적 입력을 검사했습니다.",
+      "baseline exit 0, 마스크 한 비트를 바꾼 mutant는 assertion 실패(SIGABRT, -6)입니다.",
+      "컴파일 실패를 mutant 검출로 오인하던 생성 스크립트를 리뷰하고 수정했습니다.",
+      "별도 1-bit ECC 설정에서 드라이버 object를 컴파일하고 git diff --check를 통과했습니다."
+    ],
+    "commands": [
+      "cc -std=c11 -Wall -Wextra -Werror -I drivers/mtd/nand/raw examples/claude-demo/ecc_pack_test.c -o /tmp/ecc-pack-test",
+      "/tmp/ecc-pack-test",
+      "python3 examples/claude-demo/run_mutant_check.py",
+      "make -j4 O=build/da850-1bit-demo CROSS_COMPILE=arm-linux-gnueabi- drivers/mtd/nand/raw/davinci_nand.o",
+      "git diff --check"
+    ],
+    "limitations": "호스트 테스트는 ECC 결과의 비트 포장만 검사합니다. 실제 ECC 계산 회로·오류 정정·NAND I/O는 미검증입니다. 1-bit 변형 설정은 코드 컴파일 확인용이며 보드에 배포할 권장 설정이 아닙니다."
+  },
+  {
+    "id": "V7-H-docs",
+    "session": "docs",
+    "posterSecond": 66,
+    "summary": "실제 코드와 diff를 읽어 검토 문서를 저장합니다. 초안의 단위 오류와 불명확한 빌드 명령을 리뷰하고, 실제 명령으로 다시 확인하며 문서를 고칩니다.",
+    "cuts": [
+      {
+        "start": 1,
+        "end": 15
+      },
+      {
+        "start": 24,
+        "end": 39
+      },
+      {
+        "start": 65,
+        "end": 86
+      },
+      {
+        "start": 132,
+        "end": 157
+      }
+    ],
+    "chapters": [
+      {
+        "second": 0,
+        "title": "소스·diff 근거 수집",
+        "caption": "실제 드라이버, 공통 helper, 테스트와 diff를 읽어 문서의 근거를 수집합니다."
+      },
+      {
+        "second": 14,
+        "title": "문서 초안 저장",
+        "caption": "검토 문서를 실제 파일로 저장합니다. 초안의 단위 표현과 빌드 명령은 다음 단계에서 검토·수정합니다."
+      },
+      {
+        "second": 29,
+        "title": "초안 오류 리뷰·수정",
+        "caption": "잘못 쓴 12바이트를 24비트·3바이트로 바로잡고, 호스트 검사와 남은 보드 검증을 구분합니다."
+      },
+      {
+        "second": 50,
+        "title": "실제 명령과 최종 대조",
+        "caption": "O=build/da850-1bit-demo 명령을 문서에 반영하고 기존 object를 재검사합니다. 최종 문서와 diff 검사 결과를 확인합니다."
+      }
+    ],
+    "results": [
+      "examples/claude-demo/davinci-ecc-review.md를 실제로 작성했습니다.",
+      "소스 커밋·함수 위치·MMIO 경계와 helper 추출 변경을 기록했습니다.",
+      "초안의 12바이트 표현을 24비트(3바이트)로 수정했습니다.",
+      "빌드 명령을 실제 세션의 출력 디렉토리와 맞추고 기존 object를 재검사했습니다.",
+      "데이터시트 대조와 실보드 NAND read/write·오류 주입은 남은 검증으로 분리했습니다."
+    ],
+    "commands": [
+      "git rev-parse HEAD",
+      "git diff -- drivers/mtd/nand/raw/davinci_nand.c",
+      "make -j4 O=build/da850-1bit-demo CROSS_COMPILE=arm-linux-gnueabi- drivers/mtd/nand/raw/davinci_nand.o",
+      "sed -n '1,40p' examples/claude-demo/davinci-ecc-review.md",
+      "git diff --check"
+    ],
+    "limitations": "생성 문서에도 오류가 있어 사람의 검토 후 수정했습니다. 사양서의 레지스터 주소·절 번호와 실보드 동작은 확인하지 않았으며 문서에 미확인으로 명시했습니다."
+  }
+]
