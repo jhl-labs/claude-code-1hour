@@ -58,10 +58,12 @@ export function History({ onEnter }: { onEnter?: (id: typeof meta.id) => void })
               <strong>grep, 파일 읽기, 연관 추적</strong>을 Claude가 먼저 수행합니다.
             </p>
           </Card>
-          <Card eyebrow="2025~2026" title="팀 규칙을 함께 쓴다">
+          <Card eyebrow="2026" title="팀 규칙을 함께 쓴다">
             <p>
               `CLAUDE.md`, Skills, Hooks 로 팀 절차를 반복 가능하게 만들 수 있습니다.
               개인 요령이 아니라 <strong>팀의 작업 방식</strong>으로 붙는다는 점이 변곡점입니다.
+              여기에 더해 <strong>Workflow</strong>로 여러 서브에이전트를 동시에 굴려 사람이
+              결과만 취합하는 단계까지 왔습니다.
             </p>
           </Card>
         </div>
