@@ -1,5 +1,4 @@
 import { ScrollSection } from "@/app/components/ScrollSection";
-import { LessonVideo } from "@/app/components/LessonVideo";
 import { SectionIntro, DocLink } from "@/app/components/SectionIntro";
 import { CodeBlock } from "@/app/components/CodeBlock";
 import { Card } from "@/app/components/Card";
@@ -16,7 +15,6 @@ export function GettingStarted({
         라이브에서는 설치 경로·권한·첫 읽기 작업을 설명합니다. 아래 체크리스트로
         강의 후 자신의 환경에서 시작하세요.
       </SectionIntro>
-      <LessonVideo id="V11-install" mp4 />
       <h3 className="text-xl font-semibold">공식 native 설치</h3>
       <p className="mt-3 leading-relaxed text-ink-soft">
         OS와 조직 설치 정책에 맞는 명령을 사용하세요. 아래 주소는 공식 설치

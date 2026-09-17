@@ -9,25 +9,18 @@
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck:remotion": "tsc -p tsconfig.remotion.json",
-    "remotion:studio": "remotion studio",
-    "demos:clone-uboot": "bash demos/scripts/clone-uboot.sh",
-    "demos:render": "node scripts/videos/render.cjs"
+    "demos:clone-uboot": "bash demos/scripts/clone-uboot.sh"
   },
   "packageManager": "pnpm@9.0.0",
   "dependencies": {
-    "@remotion/bundler": "^4.0.452",
-    "@remotion/cli": "^4.0.452",
-    "@remotion/player": "^4.0.452",
-    "@remotion/renderer": "^4.0.452",
     "mermaid": "^11.14.0",
     "next": "^15.5.15",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "react-syntax-highlighter": "^16.1.1",
-    "remotion": "^4.0.452"
+    "react-syntax-highlighter": "^16.1.1"
   },
   "devDependencies": {
+    "@remotion/renderer": "^4.0.452",
     "@tailwindcss/typography": "^0.5.19",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",

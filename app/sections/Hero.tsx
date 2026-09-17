@@ -17,14 +17,15 @@ export function Hero({ onEnter }: { onEnter?: (id: typeof meta.id) => void }) {
         배웁니다. 최신 모델을 선택하고, 작업 범위와 권한을 정하고, 근거가 남는
         결과를 만드는 것이 목표입니다.
       </p>
+      <a href="#embedded-demos" className="mt-6 inline-block rounded-lg bg-accent px-5 py-3 font-semibold text-bg">50초 실제 시연 바로 보기 →</a>
       <div className="mt-8 rounded-lg border border-accent/30 bg-bg-soft p-6">
         <h2 className="font-semibold">
-          이 강의의 영상은 설명용 시나리오입니다
+          설명은 읽고, 실제 작업은 시연으로 확인합니다
         </h2>
         <p className="mt-2 leading-relaxed text-ink-soft">
-          Claude의 실제 실행 녹화나 성능 측정 자료가 아닙니다. 명령과 검토
-          절차를 설명하며, 빌드·테스트 성공이나 시간 절감률을 입증하지 않습니다.
-          실제 실행 시 사용할 보드·커밋·도구 체인은 별도로 확인하세요.
+          개념과 명령 예제는 직접 넘기는 슬라이드로 읽습니다. 실제 시연에서는
+          Claude Code가 C 파일을 읽고, 오류를 수정하고, 테스트하는 터미널을
+          보여줍니다. 이어서 U-Boot 실습에 적용할 요청과 검토 기준을 살펴봅니다.
         </p>
       </div>
       <div className="mt-8 grid gap-4 md:grid-cols-3">
@@ -48,7 +49,7 @@ export function Hero({ onEnter }: { onEnter?: (id: typeof meta.id) => void }) {
                 href={`#${s.id}`}
                 className="flex justify-between rounded bg-bg-soft px-4 py-3 hover:text-accent"
               >
-                <span>{s.title === "Hero" ? "오프닝" : s.title}</span>
+                <span>{s.title}</span>
                 <span>{s.durationMinutes}분</span>
               </a>
             </li>

@@ -1,5 +1,4 @@
 import { ScrollSection } from "@/app/components/ScrollSection";
-import { LessonVideo } from "@/app/components/LessonVideo";
 import { SectionIntro } from "@/app/components/SectionIntro";
 import { Card } from "@/app/components/Card";
 import { sections } from "@/app/lib/sections";
@@ -19,7 +18,6 @@ export function Impact({
         되는지는 팀의 과제와 완료 기준에 따라 측정해야 합니다. 이 강의에는
         검증된 시간 절감률 자료가 없습니다.
       </SectionIntro>
-      <LessonVideo id="V8-before-after" />
       <div className="grid gap-4 md:grid-cols-3">
         <Card title="작성과 실행">
           요청 작성부터 도구 실행·대기 시간을 포함합니다.
@@ -31,7 +29,6 @@ export function Impact({
           누락·회귀·미검증 범위와 모델 사용량·비용을 함께 기록합니다.
         </Card>
       </div>
-      <LessonVideo id="V9-savings-chart" />
       <div className="rounded-lg border border-accent/30 p-6">
         <h3 className="text-xl font-semibold">작은 도입 실험</h3>
         <ol className="mt-4 list-decimal space-y-3 pl-5 text-ink-soft">

@@ -1,5 +1,5 @@
 import { ScrollSection } from "@/app/components/ScrollSection";
-import { LessonVideo } from "@/app/components/LessonVideo";
+import { LessonSlides } from "@/app/components/LessonSlides";
 import { SectionIntro, DocLink } from "@/app/components/SectionIntro";
 import { CodeBlock } from "@/app/components/CodeBlock";
 import { sections } from "@/app/lib/sections";
@@ -40,7 +40,7 @@ export function Features({
     <ScrollSection section={meta} onEnter={onEnter}>
       <SectionIntro label="§2 · 12분" title="핵심 기능과 안전한 실행">
         처음에는 분석·지침·권한을 익히고, 반복 작업이 생기면 확장 기능을
-        적용합니다. 영상은 직접 재생하며 한 번에 하나씩 봅니다.
+        적용합니다. 예제는 이전·다음 버튼으로 자신의 속도에 맞춰 읽으세요.
       </SectionIntro>
       <div className="space-y-12">
         {features.map((f) => (
@@ -49,7 +49,7 @@ export function Features({
             <p className="mt-3 max-w-4xl leading-relaxed text-ink-soft">
               {f.body}
             </p>
-            <LessonVideo id={f.id} />
+            <LessonSlides id={f.id} />
           </article>
         ))}
       </div>

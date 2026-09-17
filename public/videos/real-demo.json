@@ -1,0 +1,54 @@
+{
+  "id": "claude-code-real",
+  "duration": 50.0,
+  "sha256": "47f34b3f918ddea7c0aeb15c3d2b41e6a4347bc34882ba2866795befd0e2dacd",
+  "rawSha256": "8cc6ba8ad54077d0287b9d4d982f5e972a4ebc5eae8397c78fb157d25d28d794",
+  "recordedAt": "2026-09-17",
+  "cliVersion": "2.1.274",
+  "model": "Sonnet 5 · low effort",
+  "editing": "응답 완료 후 대기와 로그 탐색 사이의 정지 구간을 잘랐습니다. 남긴 구간은 원래 속도이며, 화면 출력과 실행 순서는 바꾸지 않았습니다.",
+  "cuts": [
+    {
+      "sourceStart": 2.8,
+      "sourceEnd": 13.8
+    },
+    {
+      "sourceStart": 21.3,
+      "sourceEnd": 39.3
+    },
+    {
+      "sourceStart": 61.8,
+      "sourceEnd": 66.8
+    },
+    {
+      "sourceStart": 72,
+      "sourceEnd": 80
+    },
+    {
+      "sourceStart": 114.8,
+      "sourceEnd": 122.8
+    }
+  ],
+  "chapters": [
+    {
+      "second": 0,
+      "title": "수정 없이 코드 분석"
+    },
+    {
+      "second": 11,
+      "title": "실패 재현과 한 줄 수정"
+    },
+    {
+      "second": 29,
+      "title": "실제 실행 로그 펼치기"
+    },
+    {
+      "second": 34,
+      "title": "실패 로그와 diff 확인"
+    },
+    {
+      "second": 42,
+      "title": "통과 결과와 검증 범위"
+    }
+  ]
+}

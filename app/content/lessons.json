@@ -1,0 +1,500 @@
+[
+  {
+    "id": "V2-cli-loop",
+    "title": "분석에서 검증까지 한 사이클",
+    "scenes": [
+      {
+        "title": "1 · 변경 범위 정하기",
+        "code": [
+          "요청 예시:",
+          "davinci_nand.c의 ECC 경로를 분석해줘.",
+          "파일·함수·근거 위치를 제시하고,",
+          "이번 단계에서는 파일을 수정하지 마."
+        ],
+        "points": [
+          "입력에 대상과 완료 기준을 적습니다.",
+          "먼저 읽기 작업으로 저장소 구조를 확인합니다."
+        ]
+      },
+      {
+        "title": "2 · 근거 수집",
+        "code": [
+          "Read: drivers/mtd/nand/raw/davinci_nand.c",
+          "Grep: calculate_ecc / correct_data",
+          "Read: 해당 보드 설정과 레지스터 정의"
+        ],
+        "points": [
+          "검색 결과에서 관련 코드로 이동합니다.",
+          "확인하지 못한 데이터시트 내용은 추정으로 남깁니다."
+        ]
+      },
+      {
+        "title": "3 · 작은 변경과 실행",
+        "code": [
+          "git diff --check",
+          "git diff --stat",
+          "# 대상에 맞는 빌드와 테스트 실행"
+        ],
+        "points": [
+          "편집 전 변경 범위를 검토합니다.",
+          "실패한 명령·exit code·원인을 함께 기록합니다."
+        ]
+      },
+      {
+        "title": "4 · 사람의 검토",
+        "code": [
+          "변경 diff + 테스트 로그 + 미검증 항목",
+          "→ 리뷰할 수 있는 결과"
+        ],
+        "points": [
+          "타이밍·MMIO·DMA는 보드 검증이 필요할 수 있습니다.",
+          "완료 보고에 검증 범위와 한계를 함께 적습니다."
+        ]
+      }
+    ],
+    "source": "https://code.claude.com/docs/en/overview"
+  },
+  {
+    "id": "V3-claude-md",
+    "title": "프로젝트 지침과 메모리",
+    "scenes": [
+      {
+        "title": "1 · 짧고 구체적인 지침",
+        "code": [
+          "# CLAUDE.md",
+          "## 검증",
+          "- 변경 후 git diff --check 실행",
+          "- MMIO 변경은 데이터시트 근거 제시",
+          "- 보드 미검증 항목은 별도로 보고"
+        ],
+        "points": [
+          "프로젝트 루트에 팀 규칙을 기록합니다.",
+          "실제로 실행 가능한 빌드 명령을 추가합니다."
+        ]
+      },
+      {
+        "title": "2 · 지침과 자동 메모리",
+        "code": [
+          "CLAUDE.md    → 사람이 관리하는 지침",
+          "auto memory  → 세션에서 축적되는 메모",
+          "/memory      → 메모리 확인"
+        ],
+        "points": [
+          "CLAUDE.md의 200줄은 간결성 권장입니다.",
+          "MEMORY.md의 로딩 범위와 혼동하지 않습니다."
+        ]
+      },
+      {
+        "title": "3 · 지침은 강제 정책이 아닙니다",
+        "code": [
+          "지침 → 모델이 참고",
+          "permissions → 도구 사용 정책",
+          "sandbox → 파일·네트워크 격리"
+        ],
+        "points": [
+          "OOB를 확인하라는 문장만으로 검증이 보장되지 않습니다.",
+          "권한 설정과 실제 테스트를 함께 사용합니다."
+        ]
+      }
+    ],
+    "source": "https://code.claude.com/docs/en/memory"
+  },
+  {
+    "id": "V4-tools",
+    "title": "도구 호출과 권한 확인",
+    "scenes": [
+      {
+        "title": "Read · Grep: 먼저 찾고 읽기",
+        "code": [
+          "대상: drivers/mtd/nand/raw/davinci_nand.c",
+          "Grep → ECC 관련 심볼",
+          "Read → 함수 본문과 호출 위치"
+        ],
+        "points": [
+          "분석 단계에서 변경을 섞지 않습니다.",
+          "보고서의 근거 위치를 원본과 대조합니다."
+        ]
+      },
+      {
+        "title": "Edit · Bash: 변경하고 확인",
+        "code": [
+          "Edit → 검토한 작은 수정",
+          "Bash → git diff --check",
+          "Bash → 대상 빌드·테스트"
+        ],
+        "points": [
+          "Bash는 실제 명령을 실행합니다.",
+          "승인 여부는 모드와 allow/ask/deny 규칙에 달려 있습니다."
+        ]
+      },
+      {
+        "title": "실패도 결과의 일부",
+        "code": [
+          "/permissions",
+          "plan → 분석과 계획",
+          "default → 권한 규칙에 따라 실행"
+        ],
+        "points": [
+          "위험 명령이 언제나 자동 차단된다고 가정하지 않습니다.",
+          "실패 로그를 숨기지 말고 검증 한계로 보고합니다."
+        ]
+      }
+    ],
+    "source": "https://code.claude.com/docs/en/permissions"
+  },
+  {
+    "id": "V5-mcp",
+    "title": "MCP 연결의 전체 흐름",
+    "scenes": [
+      {
+        "title": "1 · 클라이언트와 서버",
+        "code": [
+          "Claude Code → MCP server → 외부 시스템",
+          "tools/list  → 사용 가능한 도구 확인",
+          "tools/call  → 도구 실행과 결과 반환"
+        ],
+        "points": [
+          "MCP 서버가 외부 시스템과의 연결을 담당합니다.",
+          "서버 구현·클라이언트 지원·인증이 필요합니다."
+        ]
+      },
+      {
+        "title": "2 · 서버가 제공하는 것",
+        "code": [
+          "Tools     → 호출 가능한 기능",
+          "Resources → 읽을 수 있는 데이터",
+          "Prompts   → 재사용할 프롬프트"
+        ],
+        "points": [
+          "지원 범위는 각 서버와 클라이언트마다 다릅니다.",
+          "JTAG와 빌드팜 연계는 별도 서버 구현이 필요합니다."
+        ]
+      },
+      {
+        "title": "3 · HTTP 서버 설정 예",
+        "code": [
+          "{ \"mcpServers\": { \"github\": {",
+          "  \"type\": \"http\",",
+          "  \"url\": \"https://api.githubcopilot.com/mcp/\"",
+          "} } }"
+        ],
+        "points": [
+          "프로젝트 .mcp.json에는 비밀 값을 넣지 않습니다.",
+          "인증은 공식 서버 안내에 따라 별도로 설정합니다."
+        ]
+      },
+      {
+        "title": "4 · 등록 후 연결 확인",
+        "code": [
+          "/mcp",
+          "→ 인증 상태 확인",
+          "→ 최소 권한으로 읽기 도구 시험"
+        ],
+        "points": [
+          "등록 성공과 API 호출 성공은 다릅니다.",
+          "clone만으로 인증·서버 준비가 끝나지는 않습니다."
+        ]
+      },
+      {
+        "title": "5 · 신뢰 경계 유지",
+        "code": [
+          "외부 문서·도구 응답 → 신뢰되지 않은 입력",
+          "계측 결과 → 근거 검토 → 추가 측정"
+        ],
+        "points": [
+          "서버 권한과 도구 사용 정책을 함께 제한합니다.",
+          "카운터 하나만 보고 하드웨어 고장 원인을 단정하지 않습니다."
+        ]
+      }
+    ],
+    "source": "https://code.claude.com/docs/en/mcp"
+  },
+  {
+    "id": "V6-skills-subagents-hooks",
+    "title": "반복 작업을 확장하는 방법",
+    "scenes": [
+      {
+        "title": "Skill · 절차를 재사용",
+        "code": [
+          ".claude/skills/register-review/SKILL.md",
+          "---",
+          "name: register-review",
+          "description: 레지스터 변경 근거 검토",
+          "---"
+        ],
+        "points": [
+          "절차·입력·검증 기준을 지침으로 작성합니다.",
+          "Claude Code에서 /register-review로 호출합니다."
+        ]
+      },
+      {
+        "title": "Subagent · 독립된 분석을 위임",
+        "code": [
+          ".claude/agents/reviewer.md",
+          "별도 컨텍스트 → 분석 → 결과 반환"
+        ],
+        "points": [
+          "맡길 범위와 사용할 도구를 제한합니다.",
+          "다른 작업과 같은 파일을 동시에 고치지 않게 조정합니다."
+        ]
+      },
+      {
+        "title": "Hook · 실제 이벤트 사용",
+        "code": [
+          "PreToolUse  → 도구 실행 전 검사",
+          "PostToolUse → 도구 실행 후 처리",
+          "입력: stdin JSON / 도구 이름과 인자"
+        ],
+        "points": [
+          "Git pre-commit과 Claude Code Hook은 다릅니다.",
+          "PreCommit이라는 Claude Code 이벤트는 없습니다."
+        ]
+      },
+      {
+        "title": "Workflow · 실행 순서를 코드로",
+        "code": [
+          "ultracode: 변경 파일을 독립 검토하고",
+          "근거를 대조하는 workflow를 만들어줘.",
+          "/workflows"
+        ],
+        "points": [
+          "스크립트가 여러 subagent의 흐름을 조정합니다.",
+          "유료 플랜/API 등에서 제공되며 Pro는 /config에서 켭니다."
+        ]
+      },
+      {
+        "title": "Plugins · 배포 / Agent teams · 협업",
+        "code": [
+          "Plugin → Skill·Hook·MCP 등을 배포",
+          "Agent teams → 동료 세션 간 협업"
+        ],
+        "points": [
+          "설치 출처·권한·버전을 검토합니다.",
+          "Agent teams는 실험적 기능이며 Workflow와 다릅니다."
+        ]
+      }
+    ],
+    "source": "https://code.claude.com/docs/en/workflows"
+  },
+  {
+    "id": "V7-A-legacy-c",
+    "title": "A · 레거시 C 분석과 작은 변경",
+    "scenes": [
+      {
+        "title": "1 · 분석 대상을 고정",
+        "code": [
+          "git rev-parse HEAD",
+          "wc -l drivers/mtd/nand/raw/davinci_nand.c"
+        ],
+        "points": [
+          "U-Boot 커밋과 파일 경로를 기록합니다.",
+          "줄 수·함수 수는 실제 탐색 결과에서 얻습니다."
+        ]
+      },
+      {
+        "title": "2 · 근거를 요구하는 질문",
+        "code": [
+          "ECC 계산·보정·ready 경로를 정리해줘.",
+          "각 항목에 파일·함수·근거를 붙여줘.",
+          "MMIO 접근과 순수 계산을 구분해줘.",
+          "아직 파일을 수정하지 마."
+        ],
+        "points": [
+          "분석 결과를 원본 코드와 대조합니다.",
+          "다른 NAND 컨트롤러의 사양을 섞지 않습니다."
+        ]
+      },
+      {
+        "title": "3 · 변경은 하나씩",
+        "code": [
+          "예: 비트 추출 계산을 순수 함수로 분리",
+          "입력: 레지스터에서 읽은 정수",
+          "출력: 추출된 필드 값"
+        ],
+        "points": [
+          "레지스터 읽기 순서와 volatile 의미를 보존합니다.",
+          "매크로 치환도 경계값과 타입을 검증합니다."
+        ]
+      },
+      {
+        "title": "4 · 리뷰 자료로 마무리",
+        "code": [
+          "git diff --check",
+          "git diff -- drivers/mtd/nand/raw/davinci_nand.c",
+          "결과: diff + 근거 + 테스트 + 미검증 항목"
+        ],
+        "points": [
+          "파일을 나누는 것만으로 동작 동등성이 입증되지는 않습니다.",
+          "분석 결과를 고정된 소스 커밋과 직접 대조하세요."
+        ]
+      }
+    ],
+    "source": "https://github.com/u-boot/u-boot/blob/v2026.01/drivers/mtd/nand/raw/davinci_nand.c"
+  },
+  {
+    "id": "V7-C-build",
+    "title": "C · 빌드 설정을 검증하는 순서",
+    "scenes": [
+      {
+        "title": "1 · 보드와 도구 체인부터",
+        "code": [
+          "대상: davinci_nand.c를 사용하는 보드",
+          "기록: U-Boot commit / defconfig / compiler",
+          "확인: Kconfig 의존성과 실제 활성 설정"
+        ],
+        "points": [
+          "sandbox만 빌드하면 해당 드라이버가 빠질 수 있습니다.",
+          "실제 보드 설정을 먼저 선택합니다."
+        ]
+      },
+      {
+        "title": "2 · 설정과 산출물을 분리",
+        "code": [
+          "# 변수는 검증 대상에 맞게 먼저 지정",
+          "make O=\"$OUT\" CROSS_COMPILE=\"$CROSS\" \"$DEFCONFIG\"",
+          "make O=\"$OUT\" CROSS_COMPILE=\"$CROSS\" -j2"
+        ],
+        "points": [
+          "defconfig와 본 빌드에 같은 toolchain을 전달합니다.",
+          "보드별 O= 디렉토리로 설정 혼합을 피합니다."
+        ]
+      },
+      {
+        "title": "3 · 로그와 종료 코드 기록",
+        "code": [
+          "명령 / stdout / stderr / exit code",
+          "최종 .config / 컴파일된 object",
+          "산출물 크기와 변경 diff"
+        ],
+        "points": [
+          "PASS 문자열을 출력하는 것은 빌드 검증이 아닙니다.",
+          "변경한 코드가 실제로 컴파일됐는지 확인합니다."
+        ]
+      },
+      {
+        "title": "4 · 빌드와 동작 검증 구분",
+        "code": [
+          "빌드 성공 → 문법·링크 등 확인",
+          "단위 테스트 → 정해진 논리 확인",
+          "보드 테스트 → 타이밍·MMIO·DMA 확인"
+        ],
+        "points": [
+          "빌드 성공을 하드웨어 동작 성공으로 보고하지 않습니다.",
+          "빌드 명령의 원본 로그와 종료 코드를 보존하세요."
+        ]
+      }
+    ],
+    "source": "https://docs.u-boot.org/en/latest/build/gcc.html"
+  },
+  {
+    "id": "V7-E-unit-test",
+    "title": "E · 검증 가능한 테스트 설계",
+    "scenes": [
+      {
+        "title": "1 · 하드웨어와 계산 분리",
+        "code": [
+          "MMIO read → pure decode → result",
+          "mock input → pure decode → expected"
+        ],
+        "points": [
+          "먼저 호스트에서 테스트할 경계를 만듭니다.",
+          "mock 값을 실제 코드가 읽도록 연결해야 합니다."
+        ]
+      },
+      {
+        "title": "2 · 비트 필드 경계값 예시",
+        "code": [
+          "static unsigned low12(unsigned raw) {",
+          "    return raw & 0x0fffu;",
+          "}",
+          "assert(low12(0xfaaafbbbu) == 0xbbbu);",
+          "assert(low12(0xffffffffu) == 0xfffu);"
+        ],
+        "points": [
+          "독립된 교육용 C 예제이며 드라이버 ECC 테스트는 아닙니다.",
+          "0·최대값·상위 비트 영향을 각각 검사합니다."
+        ]
+      },
+      {
+        "title": "3 · ECC 테스트의 함정",
+        "code": [
+          "원본 ECC 저장 → 데이터 오류 주입",
+          "→ 오류 상태의 ECC 재계산 또는 HW 모사",
+          "→ 보정 결과와 복원된 데이터를 확인"
+        ],
+        "points": [
+          "동일 ECC 두 개로 오류 보정을 기대하면 안 됩니다.",
+          "하드웨어 ECC 함수에 NULL을 넘겨 성공을 가정하지 않습니다."
+        ]
+      },
+      {
+        "title": "4 · 실패부터 확인",
+        "code": [
+          "의도한 오류에서 테스트가 실패하는지 확인",
+          "수정 후 재실행 → 로그와 exit code 보존",
+          "coverage → 도구·파일·분모를 함께 기록"
+        ],
+        "points": [
+          "테스트 등록·링크·실행 여부까지 확인합니다.",
+          "호스트 결과로 보드의 모든 회귀를 보장하지 않습니다."
+        ]
+      }
+    ],
+    "source": "https://docs.u-boot.org/en/latest/develop/tests_writing.html"
+  },
+  {
+    "id": "V7-H-docs",
+    "title": "H · 근거를 남기는 드라이버 문서",
+    "scenes": [
+      {
+        "title": "1 · 기존 문서부터 검색",
+        "code": [
+          "git ls-files doc drivers/mtd/nand/raw",
+          "git grep -n \"davinci\" -- doc",
+          "git grep -n \"nand\" -- doc"
+        ],
+        "points": [
+          "검색 결과가 없다는 것과 검색 오류를 구분합니다.",
+          "U-Boot 문서 디렉토리는 doc/입니다."
+        ]
+      },
+      {
+        "title": "2 · 사양과 코드를 연결",
+        "code": [
+          "레지스터 | 비트 | 코드 위치 | 사양서 절",
+          "확인 못 한 항목 → 미확인으로 표시"
+        ],
+        "points": [
+          "davinci 코드에 다른 컨트롤러의 offset을 섞지 않습니다.",
+          "레지스터 이름만으로 의미를 추측하지 않습니다."
+        ]
+      },
+      {
+        "title": "3 · 흐름을 그림으로 검토",
+        "code": [
+          "명령 설정 → ready 대기 → 데이터 읽기",
+          "                         ↓",
+          "                  ECC 상태 확인",
+          "                    ↙          ↘",
+          "                 보정          오류 보고"
+        ],
+        "points": [
+          "분기·타임아웃·에러 반환을 원본 함수와 대조합니다.",
+          "Mermaid 소스와 렌더된 그림을 함께 보관합니다."
+        ]
+      },
+      {
+        "title": "4 · 변경과 문서를 함께 리뷰",
+        "code": [
+          "commit + 코드 위치 + 데이터시트 버전",
+          "→ 문서 업데이트 근거"
+        ],
+        "points": [
+          "사양이 확인되지 않은 값은 채워 넣지 않습니다.",
+          "코드 변경 후 문서의 링크와 설명도 다시 확인합니다."
+        ]
+      }
+    ],
+    "source": "https://docs.u-boot.org/en/latest/"
+  }
+]

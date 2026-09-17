@@ -1,5 +1,4 @@
 import { ScrollSection } from "@/app/components/ScrollSection";
-import { LessonVideo } from "@/app/components/LessonVideo";
 import { SectionIntro, DocLink } from "@/app/components/SectionIntro";
 import { Card } from "@/app/components/Card";
 import { sections } from "@/app/lib/sections";
@@ -30,7 +29,6 @@ export function History({
           로그·diff·보드 검증을 함께 봅니다.
         </Card>
       </div>
-      <LessonVideo id="V1-timeline" />
       <h3 className="mt-6 text-xl font-semibold">지금 사용할 모델 확인</h3>
       <div className="mt-4 overflow-x-auto">
         <table className="w-full text-left text-sm">

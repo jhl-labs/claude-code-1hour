@@ -1,5 +1,6 @@
 import { ScrollSection } from "@/app/components/ScrollSection";
-import { LessonVideo } from "@/app/components/LessonVideo";
+import { RealDemoVideo } from "@/app/components/RealDemoVideo";
+import { LessonSlides } from "@/app/components/LessonSlides";
 import { SectionIntro } from "@/app/components/SectionIntro";
 import { CodeBlock } from "@/app/components/CodeBlock";
 import { Mermaid } from "@/app/components/Mermaid";
@@ -8,7 +9,7 @@ const meta = sections[3];
 const demos = [
   {
     id: "V7-A-legacy-c",
-    title: "A · 레거시 C 분석",
+    title: "1 · 레거시 C 분석",
     prompt:
       "drivers/mtd/nand/raw/davinci_nand.c의 ECC 계산·보정·ready 경로를 분석해줘. 파일·함수·근거 위치를 붙이고 MMIO 접근과 순수 계산을 구분해줘. 아직 수정하지 마.",
     review:
@@ -16,7 +17,7 @@ const demos = [
   },
   {
     id: "V7-C-build",
-    title: "C · 빌드 설정과 결과 검토",
+    title: "2 · 빌드 설정과 결과 검토",
     prompt:
       "이 드라이버를 실제로 컴파일하는 보드 설정과 Kconfig 의존성을 찾아줘. 사용할 toolchain과 출력 디렉토리를 명시한 검증 계획을 먼저 제시해줘. 없는 설정을 만들어내지 마.",
     review:
@@ -24,7 +25,7 @@ const demos = [
   },
   {
     id: "V7-E-unit-test",
-    title: "E · 테스트 가능한 경계 만들기",
+    title: "3 · 테스트 가능한 경계 만들기",
     prompt:
       "MMIO와 순수 계산을 분리할 수 있는 최소 변경을 제안해줘. mock이 실제 코드와 연결되는 방법, 정상·경계·오류 테스트, 빌드 등록을 설명해줘. 실행하지 않은 결과는 PASS라고 적지 마.",
     review:
@@ -32,7 +33,7 @@ const demos = [
   },
   {
     id: "V7-H-docs",
-    title: "H · 근거가 있는 문서화",
+    title: "4 · 근거가 있는 문서화",
     prompt:
       "davinci_nand.c와 관련 헤더·doc/를 읽고 호출 흐름을 문서화해줘. 레지스터 항목에는 코드 위치와 데이터시트 절을 붙여줘. 사양서를 못 찾으면 미확인으로 표시해줘.",
     review:
@@ -47,16 +48,18 @@ export function EmbeddedDemos({
   return (
     <ScrollSection section={meta} onEnter={onEnter}>
       <SectionIntro
-        label="§3 · 24분 · 각 시나리오 6분"
-        title="U-Boot NAND 작업 시나리오"
+        label="§3 · 24분 · 시연 → 코드 검토 → 직접 실습"
+        title="실제 작업을 보고, 내 코드에 적용하기"
       >
-        대상은 drivers/mtd/nand/raw/davinci_nand.c로 통일했습니다. 영상은 올바른
-        요청과 검토 절차를 설명합니다. 실제 Claude 실행·보드 빌드·성능 측정
-        결과를 재현한 영상은 아닙니다.
+        먼저 실제 Claude Code 터미널에서 분석 → 실패 재현 → 수정 → 재검증을
+        확인합니다. 작은 독립 C 예제로 흐름을 익힌 뒤 U-Boot NAND 코드로
+        범위를 넓힙니다.
       </SectionIntro>
+      <RealDemoVideo />
+      <h3 className="mt-12 mb-4 text-2xl font-semibold">응용 실습 · U-Boot NAND</h3>
       <p className="rounded bg-bg-soft p-5 leading-relaxed text-ink-soft">
-        진행 방법: 짧은 영상 → 원본 코드와 대조 → 프롬프트 실습 → 검증 범위
-        토론. 참고 소스는{" "}
+        아래는 직접 실행할 실습 가이드입니다. 예제를 읽고 → 원본 코드와 대조하고
+        → 프롬프트를 실행하고 → 검증 범위를 토론하세요. 참고 소스는{" "}
         <a
           href="https://github.com/u-boot/u-boot/blob/v2026.01/drivers/mtd/nand/raw/davinci_nand.c"
           className="text-accent underline"
@@ -69,7 +72,7 @@ export function EmbeddedDemos({
         {demos.map((d) => (
           <article key={d.id}>
             <h3 className="text-2xl font-semibold">{d.title}</h3>
-            <LessonVideo id={d.id} mp4 />
+            <LessonSlides id={d.id} />
             <h4 className="font-semibold">직접 사용할 요청</h4>
             <p className="mt-2 rounded border-l-2 border-accent bg-bg-soft p-4 leading-relaxed">
               {d.prompt}

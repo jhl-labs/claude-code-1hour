@@ -5,7 +5,7 @@ import { SideIndex } from "@/app/components/SideIndex";
 describe("SideIndex", () => {
   it("7개 항목을 렌더하고 active를 강조", () => {
     render(<SideIndex activeId="features" />);
-    expect(screen.getByText("Hero")).toBeInTheDocument();
+    expect(screen.getByText("오프닝")).toBeInTheDocument();
     expect(screen.getByText(/핵심 기능/)).toBeInTheDocument();
     const active = screen.getByText(/핵심 기능/).closest("a");
     expect(active).toHaveAttribute("data-active", "true");
