@@ -110,7 +110,7 @@ export const V1Timeline: React.FC = () => {
                 left,
                 top: 0,
                 transform: "translateX(-50%)",
-                width: 240,
+                width: 200,
                 textAlign: "center",
               }}
             >
@@ -140,7 +140,7 @@ export const V1Timeline: React.FC = () => {
               <div
                 style={{
                   fontFamily: tokens.fonts.sans,
-                  fontSize: 22,
+                  fontSize: 20,
                   fontWeight: 600,
                   marginTop: 4,
                   opacity: dotP,
